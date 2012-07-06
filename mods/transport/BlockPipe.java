@@ -66,8 +66,8 @@ public class BlockPipe extends Block implements ITextureProvider {
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
     {
 		int type = world.getBlockMetadata(x, y, z) + 1;
-		double centerMin = 0.5f - (0.0625f * type) - 0.03125f;
-		double centerMax = 0.5f + (0.0625f * type) + 0.03125f;
+		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
 		minX = centerMin;
 		minY = centerMin;
@@ -89,8 +89,6 @@ public class BlockPipe extends Block implements ITextureProvider {
 		if (connectedBottom) maxY = 1.0f;
 		if (connectedEast)   minZ = 0.0f;
 		if (connectedWest)   maxZ = 1.0f;
-
-		this.setBlockBounds((float)minX, (float)minY, (float)minZ, (float)maxX, (float)maxY, (float)maxZ);
     }
 
 	@Override
