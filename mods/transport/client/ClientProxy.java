@@ -17,8 +17,7 @@ import xabrain.mods.transport.mod_Transport;
 public class ClientProxy implements IProxy {
 	@Override
 	public void registerRenderInformation() {
-		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/sprites/terrain.png");
-		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/sprites/items.png");
+		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/resources/terrain.png");
 	}
 
 	@Override

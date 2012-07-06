@@ -12,8 +12,8 @@ import xabrain.mods.ore.IProxy;
 public class ClientProxy implements IProxy {
 	@Override
 	public void registerRenderInformation() {
-		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/sprites/terrain.png");
-		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/sprites/items.png");
+		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/resources/terrain.png");
+		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/resources/items.png");
 	}
 
 	@Override
