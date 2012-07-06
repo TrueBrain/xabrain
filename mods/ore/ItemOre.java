@@ -1,10 +1,7 @@
 package xabrain.mods.ore;
 
-import java.util.ArrayList;
-
 import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
-import net.minecraft.src.ModLoader;
 
 public class ItemOre extends ItemBlock {
 	public ItemOre(int itemID) {

@@ -1,13 +1,18 @@
 package xabrain.mods.ore;
 
 import java.io.File;
-import java.util.Random;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-
-import net.minecraft.src.*;
-import net.minecraft.src.forge.*;
+import net.minecraft.src.Block;
+import net.minecraft.src.FurnaceRecipes;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.ModLoader;
+import net.minecraft.src.SidedProxy;
+import net.minecraft.src.forge.Configuration;
+import net.minecraft.src.forge.MinecraftForge;
+import net.minecraft.src.forge.NetworkMod;
 import net.minecraft.src.forge.oredict.OreDictionary;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class mod_Ore extends NetworkMod {
 	public static final String[] oreNames = new String[] { "Copper", "Tin" };

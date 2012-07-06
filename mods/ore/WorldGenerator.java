@@ -2,13 +2,12 @@ package xabrain.mods.ore;
 
 import java.util.Random;
 
-import cpw.mods.fml.common.IWorldGenerator;
-
 import net.minecraft.src.ChunkProviderEnd;
 import net.minecraft.src.ChunkProviderHell;
 import net.minecraft.src.IChunkProvider;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldGenMinable;
+import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
 	@Override

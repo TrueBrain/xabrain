@@ -2,8 +2,9 @@ package xabrain.mods.ore;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.*;
-import net.minecraft.src.forge.*;
+import net.minecraft.src.Item;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.forge.ITextureProvider;
 
 public class ItemIngot extends Item implements ITextureProvider {
 	protected ItemIngot(int itemID) {

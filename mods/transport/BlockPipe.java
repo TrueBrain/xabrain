@@ -2,8 +2,13 @@ package xabrain.mods.transport;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.*;
-import net.minecraft.src.forge.*;
+import net.minecraft.src.AxisAlignedBB;
+import net.minecraft.src.Block;
+import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
+import net.minecraft.src.World;
+import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPipe extends Block implements ITextureProvider {
 	public boolean connectedNorth = false;

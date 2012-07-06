@@ -2,8 +2,10 @@ package xabrain.mods.ore;
 
 import java.util.ArrayList;
 
-import net.minecraft.src.*;
-import net.minecraft.src.forge.*;
+import net.minecraft.src.Block;
+import net.minecraft.src.ItemStack;
+import net.minecraft.src.Material;
+import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockOre extends Block implements ITextureProvider {
 	public BlockOre(int blockID) {
