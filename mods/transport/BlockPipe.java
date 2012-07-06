@@ -65,8 +65,9 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
     {
-		double centerMin = 0.4f;
-		double centerMax = 0.6f;
+		int type = world.getBlockMetadata(x, y, z) + 1;
+		double centerMin = 0.5f - (0.0625f * type) - 0.03125f;
+		double centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
 		minX = centerMin;
 		minY = centerMin;
@@ -94,8 +95,9 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
-		float centerMin = 0.4f;
-		float centerMax = 0.6f;
+		int type = world.getBlockMetadata(x, y, z) + 1;
+		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
 		/* Update the connections */
 		setBlockBoundsBasedOnState(world, x, y, z);

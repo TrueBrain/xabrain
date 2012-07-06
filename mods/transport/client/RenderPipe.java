@@ -6,13 +6,14 @@ import xabrain.mods.transport.BlockPipe;
 
 public class RenderPipe {
 	public static boolean renderBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
-		float centerMin = 0.4f;
-		float centerMax = 0.6f;
+		int type = world.getBlockMetadata(x, y, z) + 1;
+		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
 		/* Update the connections */
 		block.setBlockBoundsBasedOnState(world, x, y, z);
 
-		renderer.overrideBlockTexture = 1;
+		renderer.overrideBlockTexture = type - 1;
 
 		/* Center of pipe */
 		block.setBlockBounds(centerMin, centerMin, centerMin, centerMax, centerMax, centerMax);
