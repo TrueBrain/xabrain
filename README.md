@@ -22,13 +22,17 @@ Mods
  - mod_transport: Adds pipes to the game.
 
 
-Installation
+Requirement
 ------------
 
-Requires MCForge 3.3.8.160+
-Requires a custom (pending) patch for MCForge
-Requires a custom (pending) patch for FML
-Requires a modified 'recompile' script (to ignore ClientProxy.java)
+- Requires MCForge 3.3.8.160+
+- Requires a custom (pending) patch for MCForge
+- Requires a custom (pending) patch for FML
+- Requires a modified 'recompile' script (to ignore ClientProxy.java)
+
+
+Installation
+------------
 
 - setup a MCForge development env
 - git clone into src/minecraft
