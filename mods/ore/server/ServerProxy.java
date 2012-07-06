@@ -8,8 +8,7 @@ import xabrain.mods.ore.IProxy;
 
 public class ServerProxy implements IProxy {
 	@Override
-	public void registerRenderInformation() {
-	}
+	public void registerRenderInformation() {}
 
 	@Override
 	public File getMinecraftDir() {

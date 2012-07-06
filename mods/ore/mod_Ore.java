@@ -17,7 +17,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 public class mod_Ore extends NetworkMod {
 	public static final String[] oreNames = new String[] { "Copper", "Tin" };
 
-	@SidedProxy(clientSide="xabrain.mods.ore.client.ClientProxy", serverSide="xabrain.mods.ore.server.ServerProxy")
+	@SidedProxy(clientSide = "xabrain.mods.ore.client.ClientProxy", serverSide = "xabrain.mods.ore.server.ServerProxy")
 	public static IProxy proxy;
 
 	public static Block blockOre;
@@ -25,20 +25,17 @@ public class mod_Ore extends NetworkMod {
 	public static WorldGenerator worldGenerator = new WorldGenerator();
 
 	@Override
-	public String getVersion()
-	{
+	public String getVersion() {
 		return "0.1";
 	}
-	
+
 	@Override
-	public boolean clientSideRequired()
-	{
+	public boolean clientSideRequired() {
 		return true;
 	}
 
 	@Override
-	public void load()
-	{
+	public void load() {
 		MinecraftForge.versionDetect("Ore", 3, 3, 8);
 
 		File cfgFile = new File(proxy.getMinecraftDir(), "config/XaBrain.cfg");
@@ -46,19 +43,20 @@ public class mod_Ore extends NetworkMod {
 		cfg.load();
 
 		blockOre = new BlockOre(cfg.getOrCreateBlockIdProperty("ores", 2000).getInt(2000));
-		itemIngot = new ItemIngot(cfg.getOrCreateIntProperty("ingots", Configuration.CATEGORY_ITEM, 20001).getInt(20001));
+		itemIngot = new ItemIngot(cfg.getOrCreateIntProperty("ingots", Configuration.CATEGORY_ITEM, 20000).getInt(20000));
 
 		cfg.save();
 
 		proxy.registerRenderInformation();
 
-		ModLoader.registerBlock(blockOre, ItemOre.class);
-		FMLCommonHandler.instance().registerWorldGenerator(worldGenerator);
+		registerAll();
 
-		addOres();
+		FMLCommonHandler.instance().registerWorldGenerator(worldGenerator);
 	}
 
-	public void addOres() {
+	private void registerAll() {
+		ModLoader.registerBlock(blockOre, ItemOre.class);
+
 		for (int i = 0; i < oreNames.length; i++) {
 			FurnaceRecipes.smelting().addSmelting(blockOre.blockID, i, new ItemStack(itemIngot, 1, i));
 

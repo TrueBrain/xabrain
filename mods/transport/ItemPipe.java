@@ -11,20 +11,17 @@ public class ItemPipe extends ItemBlock {
 	}
 
 	// @Override (client-only)
-	public int getIconFromDamage(int metadata)
-	{
+	public int getIconFromDamage(int metadata) {
 		return metadata;
 	}
 
 	@Override
-	public int getMetadata(int metadata)
-	{
+	public int getMetadata(int metadata) {
 		return metadata;
 	}
 
 	@Override
-	public String getItemNameIS(ItemStack itemStack)
-	{
+	public String getItemNameIS(ItemStack itemStack) {
 		return super.getItemName() + "." + mod_Transport.pipeNames[itemStack.getItemDamage()];
 	}
 }

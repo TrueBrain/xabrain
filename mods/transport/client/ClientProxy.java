@@ -20,17 +20,17 @@ public class ClientProxy implements IProxy {
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/sprites/terrain.png");
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/sprites/items.png");
 	}
-	
+
 	@Override
 	public File getMinecraftDir() {
 		return Minecraft.getMinecraftDir();
 	}
-	
+
 	@Override
 	public boolean isRemote() {
 		return ModLoader.getMinecraftInstance().theWorld.isRemote;
 	}
-	
+
 	@Override
 	public World getCurrentWorld() {
 		return ModLoader.getMinecraftInstance().theWorld;
@@ -44,7 +44,7 @@ public class ClientProxy implements IProxy {
 	@Override
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
 		if (modelID == mod_Transport.renderTypePipe) {
-			RenderPipe.renderBlock(renderer, world, x, y, z, (BlockPipe)block);
+			RenderPipe.renderBlock(renderer, world, x, y, z, (BlockPipe) block);
 		}
 
 		return false;

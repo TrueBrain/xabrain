@@ -15,17 +15,17 @@ public class ClientProxy implements IProxy {
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/sprites/terrain.png");
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/ore/sprites/items.png");
 	}
-	
+
 	@Override
 	public File getMinecraftDir() {
 		return Minecraft.getMinecraftDir();
 	}
-	
+
 	@Override
 	public boolean isRemote() {
 		return ModLoader.getMinecraftInstance().theWorld.isRemote;
 	}
-	
+
 	@Override
 	public World getCurrentWorld() {
 		return ModLoader.getMinecraftInstance().theWorld;

@@ -11,8 +11,7 @@ import xabrain.mods.transport.IProxy;
 
 public class ServerProxy implements IProxy {
 	@Override
-	public void registerRenderInformation() {
-	}
+	public void registerRenderInformation() {}
 
 	@Override
 	public File getMinecraftDir() {

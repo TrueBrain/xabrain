@@ -39,10 +39,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 	}
 
 	@Override
-	public void addCreativeItems(ArrayList itemList)
-	{	   
-		for (int i = 0; i < mod_Transport.pipeNames.length; i++)
-		{
+	public void addCreativeItems(ArrayList itemList) {
+		for (int i = 0; i < mod_Transport.pipeNames.length; i++) {
 			itemList.add(new ItemStack(this, 1, i));
 		}
 	}
@@ -51,7 +49,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 	public int getRenderType() {
 		return mod_Transport.renderTypePipe;
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -63,8 +61,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 	}
 
 	@Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z)
-    {
+	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
 		int type = world.getBlockMetadata(x, y, z) + 1;
 		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
@@ -76,20 +73,20 @@ public class BlockPipe extends Block implements ITextureProvider {
 		maxY = centerMax;
 		maxZ = centerMax;
 
-		connectedNorth  = canConnectPipeTo(world, x - 1, y, z);
-		connectedSouth  = canConnectPipeTo(world, x + 1, y, z);
-		connectedTop    = canConnectPipeTo(world, x, y - 1, z);
+		connectedNorth = canConnectPipeTo(world, x - 1, y, z);
+		connectedSouth = canConnectPipeTo(world, x + 1, y, z);
+		connectedTop = canConnectPipeTo(world, x, y - 1, z);
 		connectedBottom = canConnectPipeTo(world, x, y + 1, z);
-		connectedEast   = canConnectPipeTo(world, x, y, z - 1);
-		connectedWest   = canConnectPipeTo(world, x, y, z + 1);
+		connectedEast = canConnectPipeTo(world, x, y, z - 1);
+		connectedWest = canConnectPipeTo(world, x, y, z + 1);
 
-		if (connectedNorth)  minX = 0.0f;
-		if (connectedSouth)  maxX = 1.0f;
-		if (connectedTop)    minY = 0.0f;
+		if (connectedNorth) minX = 0.0f;
+		if (connectedSouth) maxX = 1.0f;
+		if (connectedTop) minY = 0.0f;
 		if (connectedBottom) maxY = 1.0f;
-		if (connectedEast)   minZ = 0.0f;
-		if (connectedWest)   maxZ = 1.0f;
-    }
+		if (connectedEast) minZ = 0.0f;
+		if (connectedWest) maxZ = 1.0f;
+	}
 
 	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
@@ -136,9 +133,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		this.setBlockBounds((float)minX, (float)minY, (float)minZ, (float)maxX, (float)maxY, (float)maxZ);
+		this.setBlockBounds((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ);
 	}
-
 
 	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z) {
 		int blockID = world.getBlockId(x, y, z);

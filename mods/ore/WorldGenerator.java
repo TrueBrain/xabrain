@@ -11,17 +11,17 @@ import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenerator implements IWorldGenerator {
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, Object...additionalData){
-        World w = (World) additionalData[0];
-        IChunkProvider cp = (IChunkProvider) additionalData[1];
-        
-        /* We don't generator our ores in Hell or End */
-        if (cp instanceof ChunkProviderHell || cp instanceof ChunkProviderEnd) return;
+	public void generate(Random random, int chunkX, int chunkZ, Object... additionalData) {
+		World w = (World) additionalData[0];
+		IChunkProvider cp = (IChunkProvider) additionalData[1];
+
+		/* We don't generator our ores in Hell or End */
+		if (cp instanceof ChunkProviderHell || cp instanceof ChunkProviderEnd) return;
 
 		for (int i = 0; i < mod_Ore.oreNames.length; i++) {
-			for (int j = 0; j < 20; j++) {                                
-				int x = (chunkX << 4) + random.nextInt(16);                                
-				int y = 10 + random.nextInt(54);                                
+			for (int j = 0; j < 20; j++) {
+				int x = (chunkX << 4) + random.nextInt(16);
+				int y = 10 + random.nextInt(54);
 				int z = (chunkZ << 4) + random.nextInt(16);
 				new WorldGenMinable(mod_Ore.blockOre.blockID, 8, i).generate(w, random, x, y, z);
 			}

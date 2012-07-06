@@ -33,10 +33,8 @@ public class BlockOre extends Block implements ITextureProvider {
 	}
 
 	@Override
-	public void addCreativeItems(ArrayList itemList)
-	{	   
-		for (int i = 0; i < mod_Ore.oreNames.length; i++)
-		{
+	public void addCreativeItems(ArrayList itemList) {
+		for (int i = 0; i < mod_Ore.oreNames.length; i++) {
 			itemList.add(new ItemStack(this, 1, i));
 		}
 	}
