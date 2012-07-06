@@ -41,7 +41,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
 		for (int i = 0; i < mod_Transport.pipeNames.length; i++) {
-			itemList.add(new ItemStack(this, 1, i));
+			itemList.add(new ItemStack(this, 1, i + 1));
 		}
 	}
 
@@ -62,7 +62,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int type = world.getBlockMetadata(x, y, z) + 1;
+		int type = world.getBlockMetadata(x, y, z);
 		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
@@ -72,6 +72,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 		maxX = centerMax;
 		maxY = centerMax;
 		maxZ = centerMax;
+
+		if (type == 0) return;
 
 		connectedNorth = canConnectPipeTo(world, x - 1, y, z);
 		connectedSouth = canConnectPipeTo(world, x + 1, y, z);
@@ -90,12 +92,14 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
-		int type = world.getBlockMetadata(x, y, z) + 1;
+		int type = world.getBlockMetadata(x, y, z);
 		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
 		/* Update the connections */
 		setBlockBoundsBasedOnState(world, x, y, z);
+
+		if (type == 0) return;
 
 		/* Center of pipe */
 		setBlockBounds(centerMin, centerMin, centerMin, centerMax, centerMax, centerMax);
@@ -138,6 +142,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z) {
 		int blockID = world.getBlockId(x, y, z);
-		return (this.blockID == blockID);
+		if (this.blockID == blockID && world.getBlockMetadata(x, y, z) != 0) return true;
+		return false;
 	}
 }

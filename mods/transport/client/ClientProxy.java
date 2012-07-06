@@ -18,6 +18,7 @@ public class ClientProxy implements IProxy {
 	@Override
 	public void registerRenderInformation() {
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/resources/terrain.png");
+		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/resources/items.png");
 	}
 
 	@Override

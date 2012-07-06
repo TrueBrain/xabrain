@@ -6,7 +6,7 @@ import xabrain.mods.transport.BlockPipe;
 
 public class RenderPipe {
 	public static boolean renderBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
-		int type = world.getBlockMetadata(x, y, z) + 1;
+		int type = world.getBlockMetadata(x, y, z);
 		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
 
@@ -14,7 +14,19 @@ public class RenderPipe {
 		block.setBlockBoundsBasedOnState(world, x, y, z);
 
 		renderer.overrideBlockTexture = type - 1;
+		if (type != 0) renderPipe(renderer, world, x, y, z, block, centerMin, centerMax);
 
+		if (type == 0) {
+			renderer.overrideBlockTexture = 0x10;
+			block.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.1f);
+			renderer.renderStandardBlock(block, x, y, z);
+		}
+
+		renderer.overrideBlockTexture = -1;
+		return true;
+	}
+
+	public static void renderPipe(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block, float centerMin, float centerMax) {
 		/* Center of pipe */
 		block.setBlockBounds(centerMin, centerMin, centerMin, centerMax, centerMax, centerMax);
 		renderer.renderStandardBlock(block, x, y, z);
@@ -50,8 +62,5 @@ public class RenderPipe {
 			block.setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 1.0f);
 			renderer.renderStandardBlock(block, x, y, z);
 		}
-
-		renderer.overrideBlockTexture = -1;
-		return true;
 	}
 }

@@ -25,6 +25,7 @@ public class mod_Transport extends NetworkMod {
 	public static IProxy proxy;
 
 	public static Block blockPipe;
+	public static Item itemConnector;
 	public static int renderTypePipe;
 
 	@Override
@@ -46,6 +47,7 @@ public class mod_Transport extends NetworkMod {
 		cfg.load();
 
 		blockPipe = new BlockPipe(cfg.getOrCreateBlockIdProperty("pipe", 2001).getInt(2001));
+		itemConnector = new ItemConnector(cfg.getOrCreateIntProperty("connectors", Configuration.CATEGORY_ITEM, 20001).getInt(20001));
 
 		cfg.save();
 
@@ -56,17 +58,20 @@ public class mod_Transport extends NetworkMod {
 		renderTypePipe = ModLoader.getUniqueBlockModelID(this, false);
 
 		/* Temporary for easy testing */
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 0), new Object[] { "X_", "__", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 1), new Object[] { "XX", "__", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 2), new Object[] { "XX", "X_", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 3), new Object[] { "XX", "XX", 'X', Block.dirt });
+		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 1), new Object[] { "X_", "__", 'X', Block.dirt });
+		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 2), new Object[] { "XX", "__", 'X', Block.dirt });
+		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 3), new Object[] { "XX", "X_", 'X', Block.dirt });
+		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 4), new Object[] { "XX", "XX", 'X', Block.dirt });
 	}
 
 	private void registerAll() {
 		ModLoader.registerBlock(blockPipe, ItemPipe.class);
 
 		for (int i = 0; i < pipeNames.length; i++) {
-			ModLoader.addName(new ItemStack(blockPipe, 1, i), pipeNames[i] + " Pipe");
+			ModLoader.addName(new ItemStack(blockPipe, 1, i + 1), pipeNames[i] + " Pipe");
+		}
+		for (int i = 0; i < connectorNames.length; i++) {
+			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);
 		}
 	}
 
