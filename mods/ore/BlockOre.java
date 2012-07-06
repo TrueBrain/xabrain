@@ -17,7 +17,7 @@ public class BlockOre extends Block implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return "/xabrain/mods/ore/sprites/terrain.png";
+		return "/xabrain/mods/ore/resources/terrain.png";
 	}
 
 	@Override

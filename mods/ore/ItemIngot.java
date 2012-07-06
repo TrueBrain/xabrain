@@ -16,7 +16,7 @@ public class ItemIngot extends Item implements ITextureProvider {
 	
 	public String getTextureFile()
 	{
-		return "/xabrain/mods/ore/sprites/items.png";
+		return "/xabrain/mods/ore/resources/items.png";
 	}
 
 	// @Override (client-only)

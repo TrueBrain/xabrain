@@ -20,7 +20,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public String getTextureFile() {
-		return "/xabrain/mods/transport/sprites/terrain.png";
+		return "/xabrain/mods/transport/resources/terrain.png";
 	}
 
 	@Override
