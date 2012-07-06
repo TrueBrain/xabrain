@@ -17,5 +17,5 @@ public interface IProxy extends IGuiHandler  {
 	
 	public abstract World getCurrentWorld();
 
-	public abstract boolean renderPipe(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block);
+	public abstract boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
 }

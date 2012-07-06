@@ -3,9 +3,7 @@ package xabrain.mods.transport;
 import java.io.File;
 
 import net.minecraft.src.Block;
-import net.minecraft.src.FurnaceRecipes;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
@@ -13,7 +11,6 @@ import net.minecraft.src.SidedProxy;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.NetworkMod;
-import net.minecraft.src.forge.oredict.OreDictionary;
 
 public class mod_Transport extends NetworkMod {
 	public static final String[] pipeNames = new String[] { "Small", "Medium", "Large", "Huge" };
@@ -71,11 +68,6 @@ public class mod_Transport extends NetworkMod {
 
 	@Override
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
-		if (modelID == mod_Transport.renderTypePipe) {
-			return proxy.renderPipe(renderer, world, x, y, z, (BlockPipe)block);
-		}
-
-		return false;
+		return proxy.renderWorldBlock(renderer, world, x, y, z, block, modelID);
 	}
-
 }

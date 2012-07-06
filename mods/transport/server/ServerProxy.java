@@ -2,11 +2,11 @@ package xabrain.mods.transport.server;
 
 import java.io.File;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
-import xabrain.mods.transport.BlockPipe;
 import xabrain.mods.transport.IProxy;
 
 public class ServerProxy implements IProxy {
@@ -35,7 +35,7 @@ public class ServerProxy implements IProxy {
 	}
 
 	@Override
-	public boolean renderPipe(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
+	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
 		return false;
 	}
 }

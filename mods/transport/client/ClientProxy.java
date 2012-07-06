@@ -42,52 +42,11 @@ public class ClientProxy implements IProxy {
 	}
 
 	@Override
-	public boolean renderPipe(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
-		float centerMin = 0.4f;
-		float centerMax = 0.6f;
-
-		/* Update the connections */
-		block.setBlockBoundsBasedOnState(world, x, y, z);
-
-		renderer.overrideBlockTexture = 1;
-
-		/* Center of pipe */
-		block.setBlockBounds(centerMin, centerMin, centerMin, centerMax, centerMax, centerMax);
-		renderer.renderStandardBlock(block, x, y, z);
-
-		/* Possible sides of pipe */
-
-		if (block.connectedNorth) {
-			block.setBlockBounds(0.0f, centerMin, centerMin, centerMin, centerMax, centerMax);
-			renderer.renderStandardBlock(block, x, y, z);
+	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
+		if (modelID == mod_Transport.renderTypePipe) {
+			RenderPipe.renderBlock(renderer, world, x, y, z, (BlockPipe)block);
 		}
 
-		if (block.connectedSouth) {
-			block.setBlockBounds(centerMax, centerMin, centerMin, 1.0f, centerMax, centerMax);
-			renderer.renderStandardBlock(block, x, y, z);
-		}
-
-		if (block.connectedTop) {
-			block.setBlockBounds(centerMin, 0.0f, centerMin, centerMax, centerMin, centerMax);
-			renderer.renderStandardBlock(block, x, y, z);
-		}
-
-		if (block.connectedBottom) {
-			block.setBlockBounds(centerMin, centerMax, centerMin, centerMax, 1.0f, centerMax);
-			renderer.renderStandardBlock(block, x, y, z);
-		}
-
-		if (block.connectedEast) {
-			block.setBlockBounds(centerMin, centerMin, 0.0f, centerMax, centerMax, centerMin);
-			renderer.renderStandardBlock(block, x, y, z);
-		}
-
-		if (block.connectedWest) {
-			block.setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 1.0f);
-			renderer.renderStandardBlock(block, x, y, z);
-		}
-
-		renderer.overrideBlockTexture = -1;
-		return true;
+		return false;
 	}
 }
