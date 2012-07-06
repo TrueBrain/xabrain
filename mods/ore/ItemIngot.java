@@ -35,7 +35,7 @@ public class ItemIngot extends Item implements ITextureProvider {
 	@Override
 	public void addCreativeItems(ArrayList itemList)
 	{	   
-		for (int x = 0; x < 2; x++)
+		for (int x = 0; x < mod_Ore.oreNames.length; x++)
 		{
 			itemList.add(new ItemStack(this, 1, x));
 		}
