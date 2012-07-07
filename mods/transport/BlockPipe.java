@@ -172,6 +172,66 @@ public class BlockPipe extends Block implements ITextureProvider {
 		/* Update the connections */
 		setBlockBoundsBasedOnState(world, x, y, z);
 
+		TileEntityPipe te = getTileEntity(world, x, y, z);
+		if (te != null) {
+			float sideMin = 0.2f;
+			float sideMax = 0.8f;
+
+			/* Draw the connectors */
+			if (te.hasConnector(0)) {
+				setBlockBounds(sideMin, 0.0f, sideMin, sideMax, 0.1f, sideMax);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+			if (te.hasConnector(1)) {
+				setBlockBounds(sideMin, 0.9f, sideMin, sideMax, 1.0f, sideMax);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+			if (te.hasConnector(2)) {
+				setBlockBounds(sideMin, sideMin, 0.0f, sideMax, sideMax, 0.1f);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+			if (te.hasConnector(3)) {
+				setBlockBounds(sideMin, sideMin, 0.9f, sideMax, sideMax, 1.0f);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+			if (te.hasConnector(4)) {
+				setBlockBounds(0.0f, sideMin, sideMin, 0.1f, sideMax, sideMax);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+			if (te.hasConnector(5)) {
+				setBlockBounds(0.9f, sideMin, sideMin, 1.0f, sideMax, sideMax);
+				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+			}
+
+			/* Draw the pipes from the center to the connectors */
+			if (type != 0) {
+				if (te.hasConnector(0)) {
+					setBlockBounds(centerMin, 0.1f, centerMin, centerMax, centerMin, centerMax);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+				if (te.hasConnector(1)) {
+					setBlockBounds(centerMin, centerMax, centerMin, centerMax, 0.9f, centerMax);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+				if (te.hasConnector(2)) {
+					setBlockBounds(centerMin, centerMin, 0.1f, centerMax, centerMax, centerMin);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+				if (te.hasConnector(3)) {
+					setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 0.9f);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+				if (te.hasConnector(4)) {
+					setBlockBounds(0.1f, centerMin, centerMin, centerMin, centerMax, centerMax);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+				if (te.hasConnector(5)) {
+					setBlockBounds(centerMax, centerMin, centerMin, 0.9f, centerMax, centerMax);
+					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
+				}
+			}
+		}
+
 		if (type == 0) return;
 
 		/* Center of pipe */
