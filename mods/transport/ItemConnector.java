@@ -2,9 +2,9 @@ package xabrain.mods.transport;
 
 import java.util.ArrayList;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.Item;
-import net.minecraft.src.ItemBlock;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
@@ -27,6 +27,19 @@ public class ItemConnector extends Item implements ITextureProvider {
 		return metadata;
 	}
 
+	/*
+	 * XXX -- Purely for naming convention, this is named the same as the Block
+	 * variant
+	 */
+	public int damageDropped(int metadata) {
+		return metadata - 1;
+	}
+
+	@Override
+	public int getMetadata(int metadata) {
+		return metadata + 1;
+	}
+
 	@Override
 	public String getItemNameIS(ItemStack itemStack) {
 		return super.getItemName() + "." + mod_Transport.connectorNames[itemStack.getItemDamage()];
@@ -41,23 +54,47 @@ public class ItemConnector extends Item implements ITextureProvider {
 
 	@Override
 	public boolean onItemUseFirst(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side) {
-		/* There is already a pipe on this tile; now place the connector. */
-		if (world.getBlockId(x, y, z) == mod_Transport.blockPipe.blockID) {
-			placeConnector(world, x, y, z, side);
-			return true;
-		}
-
-		/* Check if we can place an (empty) pipe on the tile */
-		if (itemsList[mod_Transport.blockPipe.blockID].onItemUse(new ItemStack(mod_Transport.blockPipe, 1, 0), entityPlayer, world, x, y, z, side)) {
-			/* Now place the connector here too */
-			placeConnector(world, x, y, z, side);
-			return true;
-		}
-
+		if (entityPlayer.isSneaking()) return onItemUse(itemStack, entityPlayer, world, x, y, z, side);
 		return false;
 	}
-	
-	public void placeConnector(World world, int x, int y, int z, int side) {
 
+	@Override
+	public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side) {
+		if (itemStack.stackSize == 0) return false;
+
+		int blockID = world.getBlockId(x, y, z);
+
+		/* Find the right block we tried to place something on */
+		if (blockID == mod_Transport.blockPipe.blockID) {
+
+		} else if (blockID == Block.snow.blockID) {
+			side = 0;
+		} else if (blockID != Block.vine.blockID && blockID != Block.tallGrass.blockID && blockID != Block.deadBush.blockID
+				&& (Block.blocksList[blockID] != null && !Block.blocksList[blockID].isBlockReplaceable(world, x, y, z))) {
+			if (side == 0) --y;
+			if (side == 1) ++y;
+			if (side == 2) --z;
+			if (side == 3) ++z;
+			if (side == 4) --x;
+			if (side == 5) ++x;
+
+			side ^= 0x1;
+		}
+
+		/* If there isn't a pipe here yet, try to place (an invisible) one */
+		if (world.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
+			if (!entityPlayer.canPlayerEdit(x, y, z)) return false;
+			if (!world.canBlockBePlacedAt(mod_Transport.blockPipe.blockID, x, y, z, false, side)) return false;
+
+			if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, 0)) return false;
+		}
+
+		/* Now place the connector here too */
+		mod_Transport.blockPipe.placeConnector(world, x, y, z, side, (byte) this.getMetadata(itemStack.getItemDamage()));
+
+		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipe.stepSound.getStepSound(),
+				(mod_Transport.blockPipe.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipe.stepSound.getPitch() * 0.8F);
+		if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
+		return true;
 	}
 }

@@ -2,12 +2,8 @@ package xabrain.mods.transport;
 
 import java.io.File;
 
-import xabrain.mods.ore.ItemIngot;
-
 import net.minecraft.src.Block;
-import net.minecraft.src.FurnaceRecipes;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.Item;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
@@ -15,7 +11,6 @@ import net.minecraft.src.SidedProxy;
 import net.minecraft.src.forge.Configuration;
 import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.NetworkMod;
-import net.minecraft.src.forge.oredict.OreDictionary;
 
 public class mod_Transport extends NetworkMod {
 	public static final String[] pipeNames = new String[] { "Small", "Medium", "Large", "Huge" };
@@ -24,8 +19,8 @@ public class mod_Transport extends NetworkMod {
 	@SidedProxy(clientSide = "xabrain.mods.transport.client.ClientProxy", serverSide = "xabrain.mods.transport.server.ServerProxy")
 	public static IProxy proxy;
 
-	public static Block blockPipe;
-	public static Item itemConnector;
+	public static BlockPipe blockPipe;
+	public static ItemConnector itemConnector;
 	public static int renderTypePipe;
 
 	@Override
@@ -56,19 +51,15 @@ public class mod_Transport extends NetworkMod {
 		registerAll();
 
 		renderTypePipe = ModLoader.getUniqueBlockModelID(this, false);
-
-		/* Temporary for easy testing */
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 1), new Object[] { "X_", "__", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 2), new Object[] { "XX", "__", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 3), new Object[] { "XX", "X_", 'X', Block.dirt });
-		ModLoader.addRecipe(new ItemStack(blockPipe, 1, 4), new Object[] { "XX", "XX", 'X', Block.dirt });
+		MinecraftForge.registerConnectionHandler(new PacketHandlerPipe());
 	}
 
 	private void registerAll() {
 		ModLoader.registerBlock(blockPipe, ItemPipe.class);
+		ModLoader.registerTileEntity(TileEntityPipe.class, "transport.pipe");
 
 		for (int i = 0; i < pipeNames.length; i++) {
-			ModLoader.addName(new ItemStack(blockPipe, 1, i + 1), pipeNames[i] + " Pipe");
+			ModLoader.addName(new ItemStack(blockPipe, 1, i), pipeNames[i] + " Pipe");
 		}
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);

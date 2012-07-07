@@ -15,29 +15,35 @@ public class ItemPipe extends ItemBlock {
 
 	// @Override (client-only)
 	public int getIconFromDamage(int metadata) {
-		return metadata - 1;
-	}
-
-	@Override
-	public int getMetadata(int metadata) {
 		return metadata;
 	}
 
 	@Override
+	public int getMetadata(int metadata) {
+		return metadata + 1;
+	}
+
+	@Override
 	public String getItemNameIS(ItemStack itemStack) {
-		return super.getItemName() + "." + mod_Transport.pipeNames[itemStack.getItemDamage() - 1];
+		return super.getItemName() + "." + mod_Transport.pipeNames[itemStack.getItemDamage()];
 	}
 
 	@Override
 	public boolean onItemUseFirst(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side) {
+		if (entityPlayer.isSneaking()) return onItemUse(itemStack, entityPlayer, world, x, y, z, side);
+		return false;
+	}
+
+	@Override
+	public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int x, int y, int z, int side) {
 		if (itemStack.stackSize == 0) return false;
 
 		int blockID = world.getBlockId(x, y, z);
 
 		/* Find the right block we tried to place something on */
-		if (blockID == Block.snow.blockID) {
-			side = 1;
-		} else if (blockID != Block.vine.blockID && blockID != Block.tallGrass.blockID && blockID != Block.deadBush.blockID
+		if (blockID == this.shiftedIndex && mod_Transport.blockPipe.getPipeType(world, x, y, z) == 0) {
+
+		} else if (blockID != Block.snow.blockID && blockID != Block.vine.blockID && blockID != Block.tallGrass.blockID && blockID != Block.deadBush.blockID
 				&& (Block.blocksList[blockID] != null && !Block.blocksList[blockID].isBlockReplaceable(world, x, y, z))) {
 			if (side == 0) --y;
 			if (side == 1) ++y;
@@ -51,14 +57,21 @@ public class ItemPipe extends ItemBlock {
 		 * If it was a pipe block, but it contains a placeholder, make it a real
 		 * pipe now
 		 */
-		if (world.getBlockId(x, y, z) == this.shiftedIndex && world.getBlockMetadata(x, y, z) == 0) {
-			world.setBlockMetadataWithNotify(x, y, z, this.getMetadata(itemStack.getItemDamage()));
-			world.markBlockNeedsUpdate(x, y, z);
+		if (world.getBlockId(x, y, z) == this.shiftedIndex && mod_Transport.blockPipe.getPipeType(world, x, y, z) == 0) {
+			mod_Transport.blockPipe.setPipeType(world, x, y, z, this.getMetadata(itemStack.getItemDamage()));
 
 			if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
 			return true;
 		}
 
-		return false;
+		if (!entityPlayer.canPlayerEdit(x, y, z)) return false;
+		if (!world.canBlockBePlacedAt(mod_Transport.blockPipe.blockID, x, y, z, false, side)) return false;
+
+		if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, this.getMetadata(itemStack.getItemDamage()))) return false;
+
+		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipe.stepSound.getStepSound(),
+				(mod_Transport.blockPipe.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipe.stepSound.getPitch() * 0.8F);
+		if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
+		return true;
 	}
 }
