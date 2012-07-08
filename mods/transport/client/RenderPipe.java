@@ -8,8 +8,8 @@ import xabrain.mods.transport.TileEntityPipe;
 public class RenderPipe {
 	public static boolean renderBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
 		int type = block.getPipeType(world, x, y, z);
-		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
-		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
+		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
 		/* Update the connections */
 		block.setBlockBoundsBasedOnState(world, x, y, z);

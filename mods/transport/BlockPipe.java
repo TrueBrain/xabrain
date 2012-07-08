@@ -66,8 +66,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
 		int type = this.getPipeType(world, x, y, z);
-		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
-		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
+		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
 		TileEntityPipe te = getTileEntity(world, x, y, z);
 
@@ -172,8 +172,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
 		int type = this.getPipeType(world, x, y, z);
-		float centerMin = 0.5f - (0.0625f * type) - 0.03125f;
-		float centerMax = 0.5f + (0.0625f * type) + 0.03125f;
+		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
+		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
 		/* Update the connections */
 		setBlockBoundsBasedOnState(world, x, y, z);
