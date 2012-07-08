@@ -1,6 +1,7 @@
 package xabrain.mods.transport.server;
 
 import java.io.File;
+import java.util.Map;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
@@ -37,4 +38,7 @@ public class ServerProxy implements IProxy {
 	public boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID) {
 		return false;
 	}
+
+	@Override
+	public void addRenderer(Map map) {}
 }

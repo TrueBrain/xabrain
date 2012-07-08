@@ -1,6 +1,7 @@
 package xabrain.mods.transport;
 
 import java.io.File;
+import java.util.Map;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -18,4 +19,6 @@ public interface IProxy extends IGuiHandler {
 	public abstract World getCurrentWorld();
 
 	public abstract boolean renderWorldBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, Block block, int modelID);
+
+	public abstract void addRenderer(Map map);
 }

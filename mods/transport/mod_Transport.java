@@ -1,6 +1,7 @@
 package xabrain.mods.transport;
 
 import java.io.File;
+import java.util.Map;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
@@ -57,6 +58,8 @@ public class mod_Transport extends NetworkMod {
 	private void registerAll() {
 		ModLoader.registerBlock(blockPipe, ItemPipe.class);
 		ModLoader.registerTileEntity(TileEntityPipe.class, "transport.pipe");
+		ModLoader.registerEntityID(EntityPacket.class, "entity.packet", ModLoader.getUniqueEntityId());
+		MinecraftForge.registerEntity(EntityPacket.class, this, 1, 64, 20, true);
 
 		for (int i = 0; i < pipeNames.length; i++) {
 			ModLoader.addName(new ItemStack(blockPipe, 1, i), pipeNames[i] + " Pipe");
@@ -64,6 +67,11 @@ public class mod_Transport extends NetworkMod {
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);
 		}
+	}
+
+	@Override
+	public void addRenderer(Map map) {
+		proxy.addRenderer(map);
 	}
 
 	@Override

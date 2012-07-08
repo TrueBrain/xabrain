@@ -17,8 +17,8 @@ public class RenderPipe {
 		renderer.overrideBlockTexture = type - 1;
 		if (type != 0) renderPipe(renderer, world, x, y, z, block, centerMin, centerMax);
 
-		if (block.hasTileEntity(world.getBlockMetadata(x, y, z))) {
-			TileEntityPipe te = (TileEntityPipe) world.getBlockTileEntity(x, y, z);
+		TileEntityPipe te = block.getTileEntity(world, x, y, z);
+		if (te != null) {
 			float sideMin = 0.2f;
 			float sideMax = 0.8f;
 

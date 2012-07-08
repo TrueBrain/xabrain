@@ -1,6 +1,7 @@
 package xabrain.mods.transport.client;
 
 import java.io.File;
+import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Block;
@@ -11,6 +12,7 @@ import net.minecraft.src.RenderBlocks;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.MinecraftForgeClient;
 import xabrain.mods.transport.BlockPipe;
+import xabrain.mods.transport.EntityPacket;
 import xabrain.mods.transport.IProxy;
 import xabrain.mods.transport.mod_Transport;
 
@@ -48,5 +50,10 @@ public class ClientProxy implements IProxy {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void addRenderer(Map map) {
+		map.put(EntityPacket.class, new RenderPacket());
 	}
 }
