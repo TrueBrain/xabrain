@@ -73,7 +73,7 @@ public class TileEntityPipe extends TileEntity {
 	}
 
 	public int processConnector(int side, ItemStack item) {
-		if (!hasConnector(side)) return -1;
+		if (connectors[side] == null) return -1;
 
 		return connectors[side].receive(item);
 	}
