@@ -1,6 +1,7 @@
 package xabrain.mods.transport;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -33,6 +34,11 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
 	public int damageDropped(int metadata) {
 		return (metadata & 3) - 1;
+	}
+
+	@Override
+	public int quantityDropped(int meta, int fortune, Random random) {
+		return (meta & 7) == 0 ? 0 : 1;
 	}
 
 	@Override
