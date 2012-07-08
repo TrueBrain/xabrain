@@ -1,20 +1,20 @@
 package xabrain.mods.transport;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
+import net.minecraft.src.NBTTagList;
 import net.minecraft.src.Packet;
 import net.minecraft.src.TileEntity;
-import net.minecraft.src.TileEntityChest;
 
 public class TileEntityPipe extends TileEntity {
 	private Connector[] connectors = new Connector[6];
 
 	public void setConnector(int side, byte type) {
-		if (type == 0) {
-			connectors[side] = null;
-			return;
-		}
-		connectors[side] = new Connector(this, side, type);
+		connectors[side] = (type == 0) ? null : new Connector(this, side, type);
 	}
 
 	public Connector getConnector(int side) {
@@ -25,11 +25,16 @@ public class TileEntityPipe extends TileEntity {
 		return connectors[side] != null;
 	}
 
-	public void handlePacketData(byte[] connectors) {
-		/* Read the state of our connectors */
+	public void handlePacketData(DataInputStream dis) throws IOException {
 		for (int i = 0; i < 6; i++) {
-			if (connectors[i] == 0) continue;
-			this.connectors[i] = new Connector(this, i, connectors[i]);
+			byte type = dis.readByte();
+			this.connectors[i] = (type == 0) ? null : new Connector(this, i, type);
+		}
+	}
+
+	public void writePacketData(DataOutputStream dos) throws IOException {
+		for (int i = 0; i < 6; i++) {
+			dos.writeByte(connectors[i] == null ? 0 : connectors[i].type);
 		}
 	}
 
@@ -42,23 +47,37 @@ public class TileEntityPipe extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 		super.readFromNBT(par1NBTTagCompound);
+		NBTTagList list = par1NBTTagCompound.getTagList("Connectors");
 
 		/* Get where our connectors are */
-		for (int i = 0; i < connectors.length; i++) {
-			byte type = par1NBTTagCompound.getByte("connector_" + i);
-			if (type == 0) continue;
-			connectors[i] = new Connector(this, i, type);
+		for (int i = 0; i < list.tagCount(); i++) {
+			NBTTagCompound tag = (NBTTagCompound) list.tagAt(i);
+			int slot = tag.getByte("Slot");
+			byte type = tag.getByte("Type");
+
+			connectors[slot] = new Connector(this, slot, type);
+			connectors[slot].readFromNBT(tag);
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		super.writeToNBT(par1NBTTagCompound);
+		NBTTagList list = new NBTTagList();
 
 		/* Set where our connectors are */
-		for (int i = 0; i < connectors.length; i++) {
-			par1NBTTagCompound.setByte("connector_" + i, connectors[i] == null ? 0 : connectors[i].type);
+		for (byte i = 0; i < connectors.length; i++) {
+			if (connectors[i] == null) continue;
+
+			NBTTagCompound tag = new NBTTagCompound();
+			tag.setByte("Slot", i);
+			tag.setByte("Type", connectors[i].type);
+			connectors[i].writeToNBT(tag);
+
+			list.appendTag(tag);
 		}
+
+		par1NBTTagCompound.setTag("Connectors", list);
 	}
 
 	@Override

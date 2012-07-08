@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.src.DamageSource;
+import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemStack;
@@ -149,7 +150,7 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 			setDead();
 			return -1;
 		}
-		
+
 		orientation = mod_Transport.blockPipe.getPacketOrientation(worldObj, x, y, z, orientation, item);
 		if (item.stackSize == 0) setDead();
 		return orientation;
@@ -182,12 +183,14 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 	protected void dealFireDamage(int par1) {}
 
 	@Override
+	public void applyEntityCollision(Entity par1Entity) {}
+
+	@Override
 	public void onCollideWithPlayer(EntityPlayer par1EntityPlayer) {}
 
 	// @Override (Client-only)
-	public void setPositionAndRotation2(double par1, double par3, double par5, float par7, float par8, int par9) {
-		this.setPosition(par1, par3, par5);
-		this.setRotation(par7, par8);
+	public void setPositionAndRotation2(double x, double y, double z, float yaw, float pitch, int par9) {
+		setPositionAndRotation(x, y, z, yaw, pitch);
 	}
 
 	@Override

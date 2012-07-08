@@ -1,25 +1,25 @@
 package xabrain.mods.transport.modules;
 
-import xabrain.mods.transport.Connector;
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
+import xabrain.mods.transport.Connector;
 
 public class ModuleDeliver extends Module {
-	public ModuleDeliver(Connector parent) {
-		super(parent);
+	public ModuleDeliver(Integer type, Connector parent) {
+		super(type, parent);
 	}
 
 	@Override
-	public void update() {
-	}
+	public void update() {}
 
 	@Override
 	public int receive(ItemStack itemStack) {
 		pushItem(itemStack);
 		return -1;
 	}
-	
+
 	@Override
 	public boolean accepts(ItemStack itemStack) {
 		return true;
@@ -69,4 +69,10 @@ public class ModuleDeliver extends Module {
 			}
 		}
 	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound par1nbtTagCompound) {}
+
+	@Override
+	public void writeToNBT(NBTTagCompound par1nbtTagCompound) {}
 }

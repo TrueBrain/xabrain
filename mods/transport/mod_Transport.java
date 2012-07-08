@@ -16,12 +16,15 @@ import net.minecraft.src.forge.NetworkMod;
 public class mod_Transport extends NetworkMod {
 	public static final String[] pipeNames = new String[] { "Small", "Medium", "Large", "Huge" };
 	public static final String[] connectorNames = new String[] { "Mk1", "Mk2", "Mk3", "Mk4" };
+	public static final String[] moduleNames = new String[] { "Extract", "Deliver" };
 
 	@SidedProxy(clientSide = "xabrain.mods.transport.client.ClientProxy", serverSide = "xabrain.mods.transport.server.ServerProxy")
 	public static IProxy proxy;
+	public static mod_Transport instance;
 
 	public static BlockPipe blockPipe;
 	public static ItemConnector itemConnector;
+	public static ItemModule itemModule;
 	public static int renderTypePipe;
 
 	@Override
@@ -36,6 +39,8 @@ public class mod_Transport extends NetworkMod {
 
 	@Override
 	public void load() {
+		instance = this;
+
 		MinecraftForge.versionDetect("Transport", 3, 3, 8);
 
 		File cfgFile = new File(proxy.getMinecraftDir(), "config/XaBrain.cfg");
@@ -44,6 +49,7 @@ public class mod_Transport extends NetworkMod {
 
 		blockPipe = new BlockPipe(cfg.getOrCreateBlockIdProperty("pipe", 2001).getInt(2001));
 		itemConnector = new ItemConnector(cfg.getOrCreateIntProperty("connectors", Configuration.CATEGORY_ITEM, 20001).getInt(20001));
+		itemModule = new ItemModule(cfg.getOrCreateIntProperty("modules", Configuration.CATEGORY_ITEM, 20002).getInt(20002));
 
 		cfg.save();
 
@@ -53,6 +59,7 @@ public class mod_Transport extends NetworkMod {
 
 		renderTypePipe = ModLoader.getUniqueBlockModelID(this, false);
 		MinecraftForge.registerConnectionHandler(new PacketHandlerPipe());
+		MinecraftForge.setGuiHandler(this, proxy);
 	}
 
 	private void registerAll() {
@@ -66,6 +73,9 @@ public class mod_Transport extends NetworkMod {
 		}
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);
+		}
+		for (int i = 0; i < moduleNames.length; i++) {
+			ModLoader.addName(new ItemStack(itemModule, 1, i), "Module " + moduleNames[i]);
 		}
 	}
 

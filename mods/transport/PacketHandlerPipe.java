@@ -10,7 +10,6 @@ import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet;
 import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.IConnectionHandler;
 import net.minecraft.src.forge.IPacketHandler;
@@ -36,30 +35,45 @@ public class PacketHandlerPipe implements IPacketHandler, IConnectionHandler {
 	public void onPacketData(NetworkManager network, String channel, byte[] data) {
 		DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data));
 
+		int packetType;
 		int x;
 		int y;
 		int z;
-		byte[] connectors = new byte[6];
 
-		/* Read the position and the connectors */
 		try {
 			x = dis.readInt();
 			y = dis.readInt();
 			z = dis.readInt();
-			for (int i = 0; i < 6; i++)
-				connectors[i] = dis.readByte();
+			packetType = dis.readByte();
 		} catch (IOException e) {
 			return;
 		}
 
-		/* Set the connectors */
 		World world = mod_Transport.proxy.getCurrentWorld();
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if (te instanceof TileEntityPipe) {
-			TileEntityPipe tepipe = (TileEntityPipe) te;
-			tepipe.handlePacketData(connectors);
+		TileEntityPipe te = (TileEntityPipe) world.getBlockTileEntity(x, y, z);
+		if (te == null) return;
 
-			world.notifyBlockChange(x, y, z, mod_Transport.blockPipe.blockID);
+		switch (packetType) {
+			case 0:
+				try {
+					te.handlePacketData(dis);
+				} catch (IOException e) {
+					return;
+				}
+
+				world.notifyBlockChange(x, y, z, mod_Transport.blockPipe.blockID);
+				break;
+
+			case 1:
+				int side;
+				try {
+					side = dis.readByte();
+					te.getConnector(side).handlePacketData(dis);
+				} catch (IOException e) {
+					return;
+				}
+
+				break;
 		}
 	}
 
@@ -72,9 +86,32 @@ public class PacketHandlerPipe implements IPacketHandler, IConnectionHandler {
 			dos.writeInt(te.xCoord);
 			dos.writeInt(te.yCoord);
 			dos.writeInt(te.zCoord);
-			for (int i = 0; i < 6; i++) {
-				dos.writeByte(te.hasConnector(i) ? te.getConnector(i).type : 0);
-			}
+			dos.writeByte(0);
+			te.writePacketData(dos);
+		} catch (IOException e) {
+			return null;
+		}
+
+		/* Create the packet with the update */
+		Packet250CustomPayload pkt = new Packet250CustomPayload();
+		pkt.channel = channelName;
+		pkt.data = bos.toByteArray();
+		pkt.length = bos.size();
+		pkt.isChunkDataPacket = true;
+		return pkt;
+	}
+
+	public static Packet getPacket(Connector connector) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(140);
+		DataOutputStream dos = new DataOutputStream(bos);
+
+		/* Write the position and connectors state */
+		try {
+			dos.writeInt(connector.parent.xCoord);
+			dos.writeInt(connector.parent.yCoord);
+			dos.writeInt(connector.parent.zCoord);
+			dos.writeByte(1);
+			connector.writePacketData(dos);
 		} catch (IOException e) {
 			return null;
 		}

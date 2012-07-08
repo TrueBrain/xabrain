@@ -1,14 +1,15 @@
 package xabrain.mods.transport.modules;
 
 import net.minecraft.src.ItemStack;
+import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
 import xabrain.mods.transport.Connector;
 import xabrain.mods.transport.EntityPacket;
 
 public class ModuleExtract extends Module {
-	public ModuleExtract(Connector parent) {
-		super(parent);
+	public ModuleExtract(Integer type, Connector parent) {
+		super(type, parent);
 	}
 
 	@Override
@@ -79,6 +80,15 @@ public class ModuleExtract extends Module {
 
 			EntityPacket ei = new EntityPacket(parent.parent.worldObj, parent.parent.xCoord + xOffset, parent.parent.yCoord + yOffset, parent.parent.zCoord + zOffset, is, parent.side ^ 0x1);
 			parent.parent.worldObj.spawnEntityInWorld(ei);
+
+			/* Only pull one item per tick */
+			break;
 		}
 	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound par1nbtTagCompound) {}
+
+	@Override
+	public void writeToNBT(NBTTagCompound par1nbtTagCompound) {}
 }

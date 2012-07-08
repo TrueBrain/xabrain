@@ -6,6 +6,7 @@ import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
@@ -64,6 +65,26 @@ public class BlockPipe extends Block implements ITextureProvider {
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
+	}
+
+	@Override
+	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer) {
+		/* Don't open the GUI if we are sneaking */
+		if (entityPlayer.isSneaking()) return false;
+
+		TileEntityPipe te = getTileEntity(world, x, y, z);
+		if (te == null) return false;
+
+		/*
+		 * XXX -- Temporary, till I figured out how I can see which side you
+		 * selected
+		 */
+		int i;
+		for (i = 0; i < 6; i++) {
+			if (te.hasConnector(i)) break;
+		}
+		entityPlayer.openGui(mod_Transport.instance, i, world, x, y, z);
+		return true;
 	}
 
 	@Override
