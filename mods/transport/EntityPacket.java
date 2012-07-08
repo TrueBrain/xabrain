@@ -51,12 +51,12 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		motionX = 0.0f;
 		motionY = 0.0f;
 		motionZ = 0.0f;
-		if (orientation == 4) motionX = 0.05f;
-		if (orientation == 5) motionX = -0.05f;
-		if (orientation == 0) motionY = 0.05f;
-		if (orientation == 1) motionY = -0.05f;
-		if (orientation == 2) motionZ = 0.05f;
-		if (orientation == 3) motionZ = -0.05f;
+		if (orientation == 4) motionX = -0.05f;
+		if (orientation == 5) motionX = 0.05f;
+		if (orientation == 0) motionY = -0.05f;
+		if (orientation == 1) motionY = 0.05f;
+		if (orientation == 2) motionZ = -0.05f;
+		if (orientation == 3) motionZ = 0.05f;
 
 		/* If requested, move to the exact middle of the tile */
 		if (recenter) {
@@ -104,29 +104,30 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		if (x == lastX && y == lastY && z == lastZ) {
 			/* Check if we reached the connectors */
 			if (connectorReached) return;
-			if (orientation == 4 && diffX + epsilon < 0.9f) return;
-			if (orientation == 5 && diffX - epsilon > 0.1f) return;
-			if (orientation == 0 && diffY + epsilon < 0.9f) return;
-			if (orientation == 1 && diffY - epsilon > 0.1f) return;
-			if (orientation == 2 && diffZ + epsilon < 0.9f) return;
-			if (orientation == 3 && diffZ - epsilon > 0.1f) return;
+			if (orientation == 4 && diffX - epsilon > 0.1f) return;
+			if (orientation == 5 && diffX + epsilon < 0.9f) return;
+			if (orientation == 0 && diffY - epsilon > 0.1f) return;
+			if (orientation == 1 && diffY + epsilon < 0.9f) return;
+			if (orientation == 2 && diffZ - epsilon > 0.1f) return;
+			if (orientation == 3 && diffZ + epsilon < 0.9f) return;
 
 			/* We now reached the connector */
 			connectorReached = true;
 			centerReached = false;
 
-			onConnectorReached(x, y, z, orientation ^ 0x1);
+			int newOrientation = onConnectorReached(x, y, z, orientation);
+			if (newOrientation != -1 && newOrientation != orientation) setOrientation(newOrientation, true);
 			return;
 		}
 
 		/* Check if we reached the center of the tile */
 		if (centerReached) return;
-		if (orientation == 4 && diffX + epsilon < 0.5f) return;
-		if (orientation == 5 && diffX - epsilon > 0.5f) return;
-		if (orientation == 0 && diffY + epsilon < 0.5f) return;
-		if (orientation == 1 && diffY - epsilon > 0.5f) return;
-		if (orientation == 2 && diffZ + epsilon < 0.5f) return;
-		if (orientation == 3 && diffZ - epsilon > 0.5f) return;
+		if (orientation == 4 && diffX - epsilon > 0.5f) return;
+		if (orientation == 5 && diffX + epsilon < 0.5f) return;
+		if (orientation == 0 && diffY - epsilon > 0.5f) return;
+		if (orientation == 1 && diffY + epsilon < 0.5f) return;
+		if (orientation == 2 && diffZ - epsilon > 0.5f) return;
+		if (orientation == 3 && diffZ + epsilon < 0.5f) return;
 
 		/* We now reached the center */
 		centerReached = true;
@@ -138,7 +139,7 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		lastZ = z;
 
 		int newOrientation = onCenterReached(x, y, z, orientation);
-		if (newOrientation != orientation) setOrientation(newOrientation, true);
+		if (newOrientation != -1 && newOrientation != orientation) setOrientation(newOrientation, true);
 	}
 
 	public int onCenterReached(int x, int y, int z, int orientation) {
@@ -146,49 +147,38 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		if (worldObj.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
-			return orientation;
+			return -1;
 		}
 
 		/* Check if we have connectors */
 		TileEntityPipe te = mod_Transport.blockPipe.getTileEntity(worldObj, x, y, z);
 
-		if (orientation != 4 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x - 1, y, z, 5) || (te != null && te.hasConnector(4)))) return 5;
-		if (orientation != 5 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x + 1, y, z, 4) || (te != null && te.hasConnector(5)))) return 4;
-		if (orientation != 0 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y - 1, z, 1) || (te != null && te.hasConnector(0)))) return 1;
-		if (orientation != 1 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y + 1, z, 0) || (te != null && te.hasConnector(1)))) return 0;
-		if (orientation != 2 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z - 1, 3) || (te != null && te.hasConnector(2)))) return 3;
-		if (orientation != 3 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z + 1, 2) || (te != null && te.hasConnector(3)))) return 2;
+		if (orientation != 5 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x - 1, y, z, 5) || (te != null && te.hasConnector(4)))) return 4;
+		if (orientation != 4 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x + 1, y, z, 4) || (te != null && te.hasConnector(5)))) return 5;
+		if (orientation != 1 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y - 1, z, 1) || (te != null && te.hasConnector(0)))) return 0;
+		if (orientation != 0 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y + 1, z, 0) || (te != null && te.hasConnector(1)))) return 1;
+		if (orientation != 3 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z - 1, 3) || (te != null && te.hasConnector(2)))) return 2;
+		if (orientation != 2 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z + 1, 2) || (te != null && te.hasConnector(3)))) return 3;
 
-		return orientation;
+		return -1;
 	}
 
-	public void onConnectorReached(int x, int y, int z, int orientation) {
+	public int onConnectorReached(int x, int y, int z, int orientation) {
 		/* Sanity check */
 		if (worldObj.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
-			return;
+			return -1;
 		}
 
 		/* Check if we have connectors */
 		TileEntityPipe te = mod_Transport.blockPipe.getTileEntity(worldObj, x, y, z);
-		if (te == null) return;
+		if (te == null) return -1;
 
-		switch (te.getConnector(orientation)) {
-			case 0:
-				/* We have no connector on that side */
-				return;
-
-			case 1:
-			case 3:
-			case 4:
-				break;
-
-			case 2:
-				te.pushItem(item, orientation);
-				setDead();
-				break;
-		}
+		/* Let the connector handle the item */
+		orientation = te.processConnector(orientation, item);
+		if (item.stackSize == 0) setDead();
+		return orientation;
 	}
 
 	@Override

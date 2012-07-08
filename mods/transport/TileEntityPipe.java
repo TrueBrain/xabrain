@@ -74,6 +74,19 @@ public class TileEntityPipe extends TileEntity {
 		}
 	}
 
+	public int processConnector(int side, ItemStack item) {
+		if (!hasConnector(side)) return -1;
+
+		switch (connectors[side]) {
+			case 2:
+				pushItem(item, side);
+				item.stackSize = 0;
+				break;
+		}
+
+		return -1;
+	}
+
 	public void pushItem(ItemStack itemStack, int side) {
 		int x = xCoord;
 		int y = yCoord;
@@ -169,7 +182,7 @@ public class TileEntityPipe extends TileEntity {
 			ItemStack is = tec.decrStackSize(i, 64);
 			if (is == null) continue;
 
-			EntityPacket ei = new EntityPacket(worldObj, xCoord + xOffset, yCoord + yOffset, zCoord + zOffset, is, side);
+			EntityPacket ei = new EntityPacket(worldObj, xCoord + xOffset, yCoord + yOffset, zCoord + zOffset, is, side ^ 0x1);
 			worldObj.spawnEntityInWorld(ei);
 		}
 	}
