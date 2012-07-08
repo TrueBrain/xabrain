@@ -13,4 +13,6 @@ public abstract class Module {
 	public abstract void update();
 
 	public abstract int receive(ItemStack itemStack);
+
+	public abstract boolean accepts(ItemStack itemStack);
 }

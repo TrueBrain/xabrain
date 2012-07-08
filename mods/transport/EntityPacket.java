@@ -149,18 +149,10 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 			setDead();
 			return -1;
 		}
-
-		/* Check if we have connectors */
-		TileEntityPipe te = mod_Transport.blockPipe.getTileEntity(worldObj, x, y, z);
-
-		if (orientation != 5 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x - 1, y, z, 5) || (te != null && te.hasConnector(4)))) return 4;
-		if (orientation != 4 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x + 1, y, z, 4) || (te != null && te.hasConnector(5)))) return 5;
-		if (orientation != 1 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y - 1, z, 1) || (te != null && te.hasConnector(0)))) return 0;
-		if (orientation != 0 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y + 1, z, 0) || (te != null && te.hasConnector(1)))) return 1;
-		if (orientation != 3 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z - 1, 3) || (te != null && te.hasConnector(2)))) return 2;
-		if (orientation != 2 && (mod_Transport.blockPipe.canConnectPipeTo(worldObj, x, y, z + 1, 2) || (te != null && te.hasConnector(3)))) return 3;
-
-		return -1;
+		
+		orientation = mod_Transport.blockPipe.getPacketOrientation(worldObj, x, y, z, orientation, item);
+		if (item.stackSize == 0) setDead();
+		return orientation;
 	}
 
 	public int onConnectorReached(int x, int y, int z, int orientation) {

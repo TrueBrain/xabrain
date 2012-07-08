@@ -51,4 +51,16 @@ public class Connector {
 
 		return orientation;
 	}
+
+	public boolean accepts(ItemStack item) {
+		boolean accept = false;
+
+		for (int i = 0; i < slots; i++) {
+			if (modules[i] == null) continue;
+
+			if (modules[i].accepts(item)) accept = true;
+		}
+
+		return accept;
+	}
 }

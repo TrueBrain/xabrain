@@ -77,4 +77,10 @@ public class TileEntityPipe extends TileEntity {
 
 		return connectors[side].receive(item);
 	}
+
+	public boolean acceptsItem(int side, ItemStack item) {
+		if (connectors[side] == null) return false;
+
+		return connectors[side].accepts(item);
+	}
 }

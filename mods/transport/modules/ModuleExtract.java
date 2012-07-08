@@ -21,6 +21,11 @@ public class ModuleExtract extends Module {
 		return -1;
 	}
 
+	@Override
+	public boolean accepts(ItemStack itemStack) {
+		return false;
+	}
+
 	private void pullItem() {
 		double xOffset, yOffset, zOffset;
 

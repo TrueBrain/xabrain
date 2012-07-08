@@ -1,6 +1,7 @@
 package xabrain.mods.transport;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
@@ -13,6 +14,8 @@ import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
 
 public class BlockPipe extends Block implements ITextureProvider {
+	private Random random = new Random();
+
 	public boolean connectedNorth = false;
 	public boolean connectedSouth = false;
 	public boolean connectedEast = false;
@@ -318,6 +321,29 @@ public class BlockPipe extends Block implements ITextureProvider {
 		return true;
 	}
 
+	public int getPacketOrientation(World world, int x, int y, int z, int orientation, ItemStack itemStack) {
+		LinkedList<Integer> directions = new LinkedList<Integer>();
+
+		/* Check if we have connectors */
+		TileEntityPipe te = getTileEntity(world, x, y, z);
+
+		if (orientation != 5 && (canConnectPipeTo(world, x - 1, y, z, 5) || (te != null && te.acceptsItem(4, itemStack)))) directions.add(4);
+		if (orientation != 4 && (canConnectPipeTo(world, x + 1, y, z, 4) || (te != null && te.acceptsItem(5, itemStack)))) directions.add(5);
+		if (orientation != 1 && (canConnectPipeTo(world, x, y - 1, z, 1) || (te != null && te.acceptsItem(0, itemStack)))) directions.add(0);
+		if (orientation != 0 && (canConnectPipeTo(world, x, y + 1, z, 0) || (te != null && te.acceptsItem(1, itemStack)))) directions.add(1);
+		if (orientation != 3 && (canConnectPipeTo(world, x, y, z - 1, 3) || (te != null && te.acceptsItem(2, itemStack)))) directions.add(2);
+		if (orientation != 2 && (canConnectPipeTo(world, x, y, z + 1, 2) || (te != null && te.acceptsItem(3, itemStack)))) directions.add(3);
+
+		if (directions.size() == 0) {
+			/* Drop the item, as we have nowhere to go */
+			dropBlockAsItem_do(world, x, y, z, itemStack.copy());
+			itemStack.stackSize = 0;
+			return -1;
+		}
+
+		return directions.get(random.nextInt(directions.size()));
+	}
+
 	@Override
 	public void onBlockRemoval(World world, int x, int y, int z) {
 		TileEntityPipe te = getTileEntity(world, x, y, z);
@@ -325,7 +351,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			for (int i = 0; i < 6; i++) {
 				if (!te.hasConnector(i)) continue;
 
-				this.dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
+				dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
 			}
 		}
 	}

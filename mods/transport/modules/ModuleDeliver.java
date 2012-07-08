@@ -19,6 +19,11 @@ public class ModuleDeliver extends Module {
 		pushItem(itemStack);
 		return -1;
 	}
+	
+	@Override
+	public boolean accepts(ItemStack itemStack) {
+		return true;
+	}
 
 	public void pushItem(ItemStack itemStack) {
 		int x = parent.parent.xCoord;
