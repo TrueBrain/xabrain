@@ -73,7 +73,7 @@ public class PacketHandlerPipe implements IPacketHandler, IConnectionHandler {
 			dos.writeInt(te.yCoord);
 			dos.writeInt(te.zCoord);
 			for (int i = 0; i < 6; i++) {
-				dos.writeByte(te.getConnector(i));
+				dos.writeByte(te.hasConnector(i) ? te.getConnector(i).type : 0);
 			}
 		} catch (IOException e) {
 			return null;

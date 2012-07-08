@@ -24,32 +24,32 @@ public class RenderPipe {
 
 			/* Draw the connectors */
 			if (te.hasConnector(0)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(0);
+				renderer.overrideBlockTexture = te.getConnector(0).getTextureID();
 				block.setBlockBounds(sideMin, 0.0f, sideMin, sideMax, 0.1f, sideMax);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 			if (te.hasConnector(1)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(1);
+				renderer.overrideBlockTexture = te.getConnector(1).getTextureID();
 				block.setBlockBounds(sideMin, 0.9f, sideMin, sideMax, 1.0f, sideMax);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 			if (te.hasConnector(2)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(2);
+				renderer.overrideBlockTexture = te.getConnector(2).getTextureID();
 				block.setBlockBounds(sideMin, sideMin, 0.0f, sideMax, sideMax, 0.1f);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 			if (te.hasConnector(3)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(3);
+				renderer.overrideBlockTexture = te.getConnector(3).getTextureID();
 				block.setBlockBounds(sideMin, sideMin, 0.9f, sideMax, sideMax, 1.0f);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 			if (te.hasConnector(4)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(4);
+				renderer.overrideBlockTexture = te.getConnector(4).getTextureID();
 				block.setBlockBounds(0.0f, sideMin, sideMin, 0.1f, sideMax, sideMax);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 			if (te.hasConnector(5)) {
-				renderer.overrideBlockTexture = 0x10 + te.getConnector(5);
+				renderer.overrideBlockTexture = te.getConnector(5).getTextureID();
 				block.setBlockBounds(0.9f, sideMin, sideMin, 1.0f, sideMax, sideMax);
 				renderer.renderStandardBlock(block, x, y, z);
 			}

@@ -325,7 +325,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			for (int i = 0; i < 6; i++) {
 				if (!te.hasConnector(i)) continue;
 
-				this.dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i))));
+				this.dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
 			}
 		}
 	}
