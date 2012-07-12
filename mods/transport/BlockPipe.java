@@ -83,12 +83,12 @@ public class BlockPipe extends Block implements ITextureProvider {
 		connectedWest = false;
 
 		if (hasPipe) {
-			connectedNorth = canConnectPipeTo(world, x - 1, y, z, 5) && (te == null || !te.hasConnector(4));
-			connectedSouth = canConnectPipeTo(world, x + 1, y, z, 4) && (te == null || !te.hasConnector(5));
-			connectedTop = canConnectPipeTo(world, x, y - 1, z, 1) && (te == null || !te.hasConnector(0));
-			connectedBottom = canConnectPipeTo(world, x, y + 1, z, 0) && (te == null || !te.hasConnector(1));
-			connectedEast = canConnectPipeTo(world, x, y, z - 1, 3) && (te == null || !te.hasConnector(2));
-			connectedWest = canConnectPipeTo(world, x, y, z + 1, 2) && (te == null || !te.hasConnector(3));
+			connectedNorth = canConnectPipeTo(world, x - 1, y, z, 5, te);
+			connectedSouth = canConnectPipeTo(world, x + 1, y, z, 4, te);
+			connectedTop = canConnectPipeTo(world, x, y - 1, z, 1, te);
+			connectedBottom = canConnectPipeTo(world, x, y + 1, z, 0, te);
+			connectedEast = canConnectPipeTo(world, x, y, z - 1, 3, te);
+			connectedWest = canConnectPipeTo(world, x, y, z + 1, 2, te);
 		}
 
 		if (hasPipe) {
@@ -283,7 +283,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 		this.setBlockBounds((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ);
 	}
 
-	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z, int side) {
+	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z, int side, TileEntityPipe teFrom) {
 		int blockID = world.getBlockId(x, y, z);
 
 		if (!isPipe(blockID)) return false;
@@ -293,6 +293,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 		TileEntityPipe te = block.getTileEntity(world, x, y, z);
 		if (te != null && te.hasConnector(side)) return false;
+		if (teFrom != null && teFrom.hasConnector(side ^ 0x1)) return false;
 
 		return true;
 	}
@@ -335,12 +336,12 @@ public class BlockPipe extends Block implements ITextureProvider {
 		/* Check if we have connectors */
 		TileEntityPipe te = getTileEntity(world, x, y, z);
 
-		if (orientation != 5 && (canConnectPipeTo(world, x - 1, y, z, 5) || (te != null && te.acceptsItem(4, itemStack)))) directions.add(4);
-		if (orientation != 4 && (canConnectPipeTo(world, x + 1, y, z, 4) || (te != null && te.acceptsItem(5, itemStack)))) directions.add(5);
-		if (orientation != 1 && (canConnectPipeTo(world, x, y - 1, z, 1) || (te != null && te.acceptsItem(0, itemStack)))) directions.add(0);
-		if (orientation != 0 && (canConnectPipeTo(world, x, y + 1, z, 0) || (te != null && te.acceptsItem(1, itemStack)))) directions.add(1);
-		if (orientation != 3 && (canConnectPipeTo(world, x, y, z - 1, 3) || (te != null && te.acceptsItem(2, itemStack)))) directions.add(2);
-		if (orientation != 2 && (canConnectPipeTo(world, x, y, z + 1, 2) || (te != null && te.acceptsItem(3, itemStack)))) directions.add(3);
+		if (orientation != 5 && (canConnectPipeTo(world, x - 1, y, z, 5, te) || (te != null && te.acceptsItem(4, itemStack)))) directions.add(4);
+		if (orientation != 4 && (canConnectPipeTo(world, x + 1, y, z, 4, te) || (te != null && te.acceptsItem(5, itemStack)))) directions.add(5);
+		if (orientation != 1 && (canConnectPipeTo(world, x, y - 1, z, 1, te) || (te != null && te.acceptsItem(0, itemStack)))) directions.add(0);
+		if (orientation != 0 && (canConnectPipeTo(world, x, y + 1, z, 0, te) || (te != null && te.acceptsItem(1, itemStack)))) directions.add(1);
+		if (orientation != 3 && (canConnectPipeTo(world, x, y, z - 1, 3, te) || (te != null && te.acceptsItem(2, itemStack)))) directions.add(2);
+		if (orientation != 2 && (canConnectPipeTo(world, x, y, z + 1, 2, te) || (te != null && te.acceptsItem(3, itemStack)))) directions.add(3);
 
 		if (directions.size() == 0) {
 			/* Drop the item, as we have nowhere to go */
