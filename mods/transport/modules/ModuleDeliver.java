@@ -12,6 +12,11 @@ public class ModuleDeliver extends Module {
 	}
 
 	@Override
+	public String getName() {
+		return "Deliver Module";
+	}
+
+	@Override
 	public void update() {}
 
 	@Override

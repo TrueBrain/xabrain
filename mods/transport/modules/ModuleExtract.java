@@ -13,6 +13,11 @@ public class ModuleExtract extends Module {
 	}
 
 	@Override
+	public String getName() {
+		return "Extract Module";
+	}
+
+	@Override
 	public void update() {
 		pullItem();
 	}

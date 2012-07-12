@@ -28,6 +28,8 @@ public abstract class Module {
 		this.parent = parent;
 	}
 
+	public abstract String getName();
+
 	public abstract void update();
 
 	public abstract int receive(ItemStack itemStack);
