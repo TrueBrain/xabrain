@@ -6,6 +6,7 @@ import java.util.Random;
 
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
+import net.minecraft.src.EntityLiving;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
@@ -367,6 +368,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void onBlockRemoval(World world, int x, int y, int z) {
+		Graph.getGraph(world).onPipeRemove(x, y, z);
+
 		TileEntityPipe te = getTileEntity(world, x, y, z);
 		if (te != null) {
 			for (int i = 0; i < 6; i++) {
@@ -375,6 +378,14 @@ public class BlockPipe extends Block implements ITextureProvider {
 				dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
 			}
 		}
+	}
+
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving entityLiving) {
+		if (mod_Transport.proxy.isRemote()) return;
+
+		if (getPipeType(world, x, y, z) == 0) return;
+		Graph.getGraph(world).onPipeAdd(x, y, z);
 	}
 
 	public TileEntityPipe getTileEntity(IBlockAccess world, int x, int y, int z) {

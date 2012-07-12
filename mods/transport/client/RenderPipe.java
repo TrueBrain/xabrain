@@ -3,7 +3,11 @@ package xabrain.mods.transport.client;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
 import xabrain.mods.transport.BlockPipe;
+import xabrain.mods.transport.Graph;
+import xabrain.mods.transport.GraphNode;
+import xabrain.mods.transport.GraphPoint;
 import xabrain.mods.transport.TileEntityPipe;
+import xabrain.mods.transport.mod_Transport;
 
 public class RenderPipe {
 	public static boolean renderBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
@@ -14,7 +18,8 @@ public class RenderPipe {
 		/* Update the connections */
 		block.setBlockBoundsBasedOnState(world, x, y, z);
 
-		renderer.overrideBlockTexture = type - 1;
+		GraphPoint p = Graph.getGraph(mod_Transport.proxy.getCurrentWorld()).getPoint(new GraphNode(x, y, z));
+		renderer.overrideBlockTexture = p == null ? 0 : (p.isRouter() ? 1 : 2);
 		if (type != 0) renderPipe(renderer, world, x, y, z, block, centerMin, centerMax);
 
 		TileEntityPipe te = block.getTileEntity(world, x, y, z);

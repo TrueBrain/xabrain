@@ -59,6 +59,7 @@ public class ItemPipe extends ItemBlock {
 		 */
 		if (world.getBlockId(x, y, z) == this.shiftedIndex && mod_Transport.blockPipe.getPipeType(world, x, y, z) == 0) {
 			mod_Transport.blockPipe.setPipeType(world, x, y, z, this.getMetadata(itemStack.getItemDamage()));
+			Graph.getGraph(world).onPipeAdd(x, y, z);
 
 			if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
 			return true;

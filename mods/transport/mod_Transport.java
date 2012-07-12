@@ -60,6 +60,7 @@ public class mod_Transport extends NetworkMod {
 		renderTypePipe = ModLoader.getUniqueBlockModelID(this, false);
 		MinecraftForge.registerConnectionHandler(new PacketHandlerPipe());
 		MinecraftForge.setGuiHandler(this, proxy);
+		MinecraftForge.registerSaveHandler(new SaveLoadHandler());
 	}
 
 	private void registerAll() {
