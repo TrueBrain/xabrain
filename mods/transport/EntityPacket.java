@@ -46,18 +46,20 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 	}
 
 	private void setOrientation(int orientation, boolean recenter) {
+		float speed = 0.1f;
+
 		this.orientation = orientation;
 
 		/* Set the motion depending on the orientation */
 		motionX = 0.0f;
 		motionY = 0.0f;
 		motionZ = 0.0f;
-		if (orientation == 4) motionX = -0.05f;
-		if (orientation == 5) motionX = 0.05f;
-		if (orientation == 0) motionY = -0.05f;
-		if (orientation == 1) motionY = 0.05f;
-		if (orientation == 2) motionZ = -0.05f;
-		if (orientation == 3) motionZ = 0.05f;
+		if (orientation == 4) motionX = -speed;
+		if (orientation == 5) motionX = speed;
+		if (orientation == 0) motionY = -speed;
+		if (orientation == 1) motionY = speed;
+		if (orientation == 2) motionZ = -speed;
+		if (orientation == 3) motionZ = speed;
 
 		/* If requested, move to the exact middle of the tile */
 		if (recenter) {
