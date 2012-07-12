@@ -61,95 +61,12 @@ public class BlockPipe extends Block implements ITextureProvider {
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		boolean hasPipe = this.hasPipe(world, x, y, z);
-		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
-		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
+	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {}
 
-		TileEntityPipe te = getTileEntity(world, x, y, z);
-
-		if (hasPipe) {
-			minX = centerMin;
-			minY = centerMin;
-			minZ = centerMin;
-			maxX = centerMax;
-			maxY = centerMax;
-			maxZ = centerMax;
-		} else {
-			minX = 1.0f;
-			minY = 1.0f;
-			minZ = 1.0f;
-			maxX = 0.0f;
-			maxY = 0.0f;
-			maxZ = 0.0f;
-		}
-
-		if (te != null) {
-			if (te.hasConnector(4)) {
-				minX = 0.0f;
-				maxX = Math.max(maxX, 0.1f);
-
-				minY = Math.min(minY, 0.2f);
-				minZ = Math.min(minZ, 0.2f);
-				maxY = Math.max(maxY, 0.8f);
-				maxZ = Math.max(maxZ, 0.8f);
-			}
-			if (te.hasConnector(0)) {
-				minY = 0.0f;
-				maxY = Math.max(maxY, 0.1f);
-
-				minX = Math.min(minX, 0.2f);
-				minZ = Math.min(minZ, 0.2f);
-				maxX = Math.max(maxX, 0.8f);
-				maxZ = Math.max(maxZ, 0.8f);
-			}
-			if (te.hasConnector(2)) {
-				minZ = 0.0f;
-				maxZ = Math.max(maxZ, 0.1f);
-
-				minX = Math.min(minX, 0.2f);
-				minY = Math.min(minY, 0.2f);
-				maxX = Math.max(maxX, 0.8f);
-				maxY = Math.max(maxY, 0.8f);
-			}
-
-			if (te.hasConnector(5)) {
-				minX = Math.min(minX, 0.9f);
-				maxX = 1.0f;
-
-				minY = Math.min(minY, 0.2f);
-				minZ = Math.min(minZ, 0.2f);
-				maxY = Math.max(maxY, 0.8f);
-				maxZ = Math.max(maxZ, 0.8f);
-			}
-			if (te.hasConnector(1)) {
-				minY = Math.min(minY, 0.9f);
-				maxY = 1.0f;
-
-				minX = Math.min(minX, 0.2f);
-				minZ = Math.min(minZ, 0.2f);
-				maxX = Math.max(maxX, 0.8f);
-				maxZ = Math.max(maxZ, 0.8f);
-			}
-			if (te.hasConnector(3)) {
-				minZ = Math.min(minZ, 0.9f);
-				maxZ = 1.0f;
-
-				minX = Math.min(minX, 0.2f);
-				minY = Math.min(minY, 0.2f);
-				maxX = Math.max(maxX, 0.8f);
-				maxY = Math.max(maxY, 0.8f);
-			}
-		}
-
-		if (hasPipe) {
-			if (canConnectPipeTo(world, x - 1, y, z, 5, te)) minX = 0.0f;
-			if (canConnectPipeTo(world, x + 1, y, z, 4, te)) maxX = 1.0f;
-			if (canConnectPipeTo(world, x, y - 1, z, 1, te)) minY = 0.0f;
-			if (canConnectPipeTo(world, x, y + 1, z, 0, te)) maxY = 1.0f;
-			if (canConnectPipeTo(world, x, y, z - 1, 3, te)) minZ = 0.0f;
-			if (canConnectPipeTo(world, x, y, z + 1, 2, te)) maxZ = 1.0f;
-		}
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+		setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 	}
 
 	@Override
@@ -157,9 +74,6 @@ public class BlockPipe extends Block implements ITextureProvider {
 		boolean hasPipe = this.hasPipe(world, x, y, z);
 		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
-
-		/* Update the connections */
-		setBlockBoundsBasedOnState(world, x, y, z);
 
 		TileEntityPipe te = getTileEntity(world, x, y, z);
 		if (te != null) {
@@ -259,7 +173,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		this.setBlockBounds((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ);
+		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z, int side, TileEntityPipe teFrom) {
@@ -298,6 +212,12 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void onBlockRemoval(World world, int x, int y, int z) {
+		/*
+		 * Don't remove the tile from the graph if we replaced it with another
+		 * pipe
+		 */
+		if (isPipe(world.getBlockId(x, y, z))) return;
+
 		Graph.getGraph(world).onPipeRemove(x, y, z);
 	}
 

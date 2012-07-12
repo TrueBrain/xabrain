@@ -23,6 +23,7 @@ public class ClientProxy implements IProxy {
 	public void registerRenderInformation() {
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/resources/terrain.png");
 		MinecraftForgeClient.preloadTexture("/xabrain/mods/transport/resources/items.png");
+		MinecraftForgeClient.registerHighlightHandler(new HighlightHandler());
 	}
 
 	@Override

@@ -12,8 +12,6 @@ public class RenderPipe {
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 		int textureId = world.getBlockMetadata(x, y, z);
 
-		/* Update the connections */
-		block.setBlockBoundsBasedOnState(world, x, y, z);
 		TileEntityPipe te = block.getTileEntity(world, x, y, z);
 
 		/* Draw the connecting pipes */
