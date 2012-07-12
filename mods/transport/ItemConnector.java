@@ -87,6 +87,11 @@ public class ItemConnector extends Item implements ITextureProvider {
 			if (!world.canBlockBePlacedAt(mod_Transport.blockPipe.blockID, x, y, z, false, side)) return false;
 
 			if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, 0)) return false;
+
+			if (world.getBlockId(x, y, z) == mod_Transport.blockPipe.blockID) {
+				mod_Transport.blockPipe.onBlockPlaced(world, x, y, z, side);
+				mod_Transport.blockPipe.onBlockPlacedBy(world, x, y, z, entityPlayer);
+			}
 		}
 
 		/* Now place the connector here too */
