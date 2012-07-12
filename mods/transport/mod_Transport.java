@@ -73,7 +73,7 @@ public class mod_Transport extends NetworkMod {
 		MinecraftForge.registerEntity(EntityPacket.class, this, 1, 64, 20, true);
 
 		for (int i = 0; i < ItemDye.dyeColorNames.length; i++) {
-			ModLoader.addName(new ItemStack(blockPipe, 1, i), ItemDye.dyeColorNames[i] + " Pipe");
+			ModLoader.addName(new ItemStack(blockPipe, 1, i), ItemDye.dyeColorNames[i].substring(0, 1).toUpperCase().concat(ItemDye.dyeColorNames[i].substring(1)) + " Pipe");
 		}
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);
