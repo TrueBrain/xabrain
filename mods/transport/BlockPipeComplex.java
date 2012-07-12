@@ -97,7 +97,11 @@ public class BlockPipeComplex extends BlockPipe {
 
 			/* This tile has no connectors anymore; downgrade to a normal block */
 			if (!hasConnector) {
-				world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, world.getBlockMetadata(x, y, z));
+				if (te.hasPipe()) {
+					world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, world.getBlockMetadata(x, y, z));
+				} else {
+					world.setBlockWithNotify(x, y, z, 0);
+				}
 			} else {
 				world.notifyBlockChange(x, y, z, this.blockID);
 			}
