@@ -17,13 +17,6 @@ import net.minecraft.src.forge.ITextureProvider;
 public class BlockPipe extends Block implements ITextureProvider {
 	private Random random = new Random();
 
-	public boolean connectedNorth = false;
-	public boolean connectedSouth = false;
-	public boolean connectedEast = false;
-	public boolean connectedWest = false;
-	public boolean connectedTop = false;
-	public boolean connectedBottom = false;
-
 	public BlockPipe(int blockID) {
 		super(blockID, 0, Material.glass);
 		setBlockName("pipe");
@@ -74,22 +67,6 @@ public class BlockPipe extends Block implements ITextureProvider {
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
 		TileEntityPipe te = getTileEntity(world, x, y, z);
-
-		connectedNorth = false;
-		connectedSouth = false;
-		connectedTop = false;
-		connectedBottom = false;
-		connectedEast = false;
-		connectedWest = false;
-
-		if (hasPipe) {
-			connectedNorth = canConnectPipeTo(world, x - 1, y, z, 5, te);
-			connectedSouth = canConnectPipeTo(world, x + 1, y, z, 4, te);
-			connectedTop = canConnectPipeTo(world, x, y - 1, z, 1, te);
-			connectedBottom = canConnectPipeTo(world, x, y + 1, z, 0, te);
-			connectedEast = canConnectPipeTo(world, x, y, z - 1, 3, te);
-			connectedWest = canConnectPipeTo(world, x, y, z + 1, 2, te);
-		}
 
 		if (hasPipe) {
 			minX = centerMin;
@@ -165,12 +142,14 @@ public class BlockPipe extends Block implements ITextureProvider {
 			}
 		}
 
-		if (connectedNorth) minX = 0.0f;
-		if (connectedSouth) maxX = 1.0f;
-		if (connectedTop) minY = 0.0f;
-		if (connectedBottom) maxY = 1.0f;
-		if (connectedEast) minZ = 0.0f;
-		if (connectedWest) maxZ = 1.0f;
+		if (hasPipe) {
+			if (canConnectPipeTo(world, x - 1, y, z, 5, te)) minX = 0.0f;
+			if (canConnectPipeTo(world, x + 1, y, z, 4, te)) maxX = 1.0f;
+			if (canConnectPipeTo(world, x, y - 1, z, 1, te)) minY = 0.0f;
+			if (canConnectPipeTo(world, x, y + 1, z, 0, te)) maxY = 1.0f;
+			if (canConnectPipeTo(world, x, y, z - 1, 3, te)) minZ = 0.0f;
+			if (canConnectPipeTo(world, x, y, z + 1, 2, te)) maxZ = 1.0f;
+		}
 	}
 
 	@Override
@@ -250,32 +229,32 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 		/* Possible sides of pipe */
 
-		if (connectedNorth) {
+		if (canConnectPipeTo(world, x - 1, y, z, 5, te)) {
 			setBlockBounds(0.0f, centerMin, centerMin, centerMin, centerMax, centerMax);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		if (connectedSouth) {
+		if (canConnectPipeTo(world, x + 1, y, z, 4, te)) {
 			setBlockBounds(centerMax, centerMin, centerMin, 1.0f, centerMax, centerMax);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		if (connectedTop) {
+		if (canConnectPipeTo(world, x, y - 1, z, 1, te)) {
 			setBlockBounds(centerMin, 0.0f, centerMin, centerMax, centerMin, centerMax);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		if (connectedBottom) {
+		if (canConnectPipeTo(world, x, y + 1, z, 0, te)) {
 			setBlockBounds(centerMin, centerMax, centerMin, centerMax, 1.0f, centerMax);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		if (connectedEast) {
+		if (canConnectPipeTo(world, x, y, z - 1, 3, te)) {
 			setBlockBounds(centerMin, centerMin, 0.0f, centerMax, centerMax, centerMin);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		if (connectedWest) {
+		if (canConnectPipeTo(world, x, y, z + 1, 2, te)) {
 			setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 1.0f);
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
