@@ -2,7 +2,6 @@ package xabrain.mods.transport.client;
 
 import net.minecraft.src.GuiContainer;
 import net.minecraft.src.InventoryPlayer;
-import net.minecraft.src.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
@@ -20,10 +19,9 @@ public class GUIConnector extends GuiContainer {
 	}
 
 	@Override
-	public boolean doesGuiPauseGame()
-    {
-        return true;
-    }
+	public boolean doesGuiPauseGame() {
+		return true;
+	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer() {
@@ -37,21 +35,20 @@ public class GUIConnector extends GuiContainer {
 		this.fontRenderer.drawString(connector.modules[selected].getName(), 56, 8, 4210752);
 	}
 
-    protected void mouseClicked(int mouseX, int mouseY, int button)
-    {
-        super.mouseClicked(mouseX, mouseY, button);
+	protected void mouseClicked(int mouseX, int mouseY, int button) {
+		super.mouseClicked(mouseX, mouseY, button);
 
-        if (button != 0 && button != 1) return;
+		if (button != 0 && button != 1) return;
 
-        int left = (this.width - this.xSize) / 2;
+		int left = (this.width - this.xSize) / 2;
 		int top = (this.height - this.ySize) / 2;
 
-        for (int i = 0; i < connector.slots; i++) {
-        	if (connector.modules[i] == null) continue;
-        	if (!isMouseOverButton(i, mouseX - left, mouseY - top)) continue;
-        	selected = i;
-        }
-    }
+		for (int i = 0; i < connector.slots; i++) {
+			if (connector.modules[i] == null) continue;
+			if (!isMouseOverButton(i, mouseX - left, mouseY - top)) continue;
+			selected = i;
+		}
+	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int mouseX, int mouseY) {

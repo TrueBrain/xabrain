@@ -1,6 +1,5 @@
 package xabrain.mods.transport;
 
-
 public class GraphNode {
 	public int x;
 	public int y;
