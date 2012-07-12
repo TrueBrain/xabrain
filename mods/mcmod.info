@@ -1,0 +1,38 @@
+[
+{
+  "modid" : "mod_Ore",
+  "name" : "XaBrain Ore",
+  "description": "Additional ores for all XaBrain mods",
+  "version" : "0.1",
+  "mcversion" : "1.2.5",
+  "url" : "",
+  "updateUrl" : "",
+  "authors": [
+    "TrueBrain",
+    "Xaroth"
+  ],
+  "credits" : "",
+  "logoFile" : "",
+  "parent" : "",
+  "screenshots": [
+  ]
+},
+{
+  "modid" : "mod_Transport",
+  "name" : "XaBrain Transport",
+  "description": "Pipes for transporting items",
+  "version" : "0.1",
+  "mcversion" : "1.2.5",
+  "url" : "",
+  "updateUrl" : "",
+  "authors": [
+    "TrueBrain",
+    "Xaroth"
+  ],
+  "credits" : "",
+  "logoFile" : "",
+  "parent" : "",
+  "screenshots": [
+  ]
+}
+]
