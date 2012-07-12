@@ -1,6 +1,5 @@
 package xabrain.mods.transport;
 
-import net.minecraft.src.World;
 
 public class GraphNode {
 	public int x;
