@@ -76,7 +76,7 @@ public class BlockPipeComplex extends BlockPipe {
 					if (!te.hasConnector(i)) continue;
 
 					dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
-					
+
 					Connector connector = te.getConnector(i);
 					for (int j = 0; j < connector.slots; j++) {
 						if (connector.modulesItemStack[j] == null) continue;
