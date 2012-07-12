@@ -18,7 +18,7 @@ public class Connector implements IInventory {
 
 	public int slots = 1;
 	public Module[] modules;
-	private ItemStack[] modulesItemStack;
+	public ItemStack[] modulesItemStack;
 
 	public Connector(TileEntityPipe parent, int side, byte type) {
 		this.parent = parent;

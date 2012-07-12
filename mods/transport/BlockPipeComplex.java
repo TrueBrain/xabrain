@@ -69,22 +69,40 @@ public class BlockPipeComplex extends BlockPipe {
 	@Override
 	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		if (!player.capabilities.isCreativeMode) {
-			/* Drop the connectors */
+			/* Drop the connectors and modules */
 			TileEntityPipe te = getTileEntity(world, x, y, z);
 			if (te != null) {
 				for (int i = 0; i < 6; i++) {
 					if (!te.hasConnector(i)) continue;
 
 					dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
-					/*
-					 * TODO -- We should also drop the modules inside the
-					 * connectors
-					 */
+					
+					Connector connector = te.getConnector(i);
+					for (int j = 0; j < connector.slots; j++) {
+						if (connector.modulesItemStack[j] == null) continue;
+
+						dropBlockAsItem_do(world, x, y, z, connector.modulesItemStack[j]);
+					}
 				}
 			}
 
 			/* Drop the pipe if there was one */
 			if (hasPipe(world, x, y, z)) dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.blockPipe.blockID, 1, world.getBlockMetadata(x, y, z)));
+		} else {
+			/* In creative, do drop the modules, as you lost them when placing them in there */
+			TileEntityPipe te = getTileEntity(world, x, y, z);
+			if (te != null) {
+				for (int i = 0; i < 6; i++) {
+					if (!te.hasConnector(i)) continue;
+
+					Connector connector = te.getConnector(i);
+					for (int j = 0; j < connector.slots; j++) {
+						if (connector.modulesItemStack[j] == null) continue;
+
+						dropBlockAsItem_do(world, x, y, z, connector.modulesItemStack[j]);
+					}
+				}
+			}
 		}
 
 		return super.removeBlockByPlayer(world, player, x, y, z);
