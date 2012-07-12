@@ -19,16 +19,16 @@ Mods
 ----
 
  - mod_ore: Adds Copper and Tin to the game. Other mods that add these? Just ommit thisone.
- - mod_transport: Adds pipes to the game.
+ - mod_transport: Adds pipes to the game. It cleverly routes packets on demand.
 
 
 Requirement
 ------------
 
-- Requires MCForge 3.3.8.160+
-- Requires a custom (pending) patch for MCForge
-- Requires a custom (pending) patch for FML
-- Requires a modified 'recompile' script (to ignore ClientProxy.java)
+- Requires MCForge 3.3.8.164+
+- Requires a custom patch for FML (see RenderWorldBlock in my fork on GitHub)
+- Requires a modified 'recompile' script (to ignore /server/ for Client, and /client/ for Server)
+- Requires a modification to Eclipse project (Exclude \*\*/server/\* in Client, and \*\*/client/\* in Server)
 
 
 Installation
