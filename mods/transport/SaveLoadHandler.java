@@ -25,7 +25,10 @@ public class SaveLoadHandler implements ISaveEventHandler {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
 					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipe.blockID) {
-						if ((chunk.getBlockMetadata(x, y, z) & 7) == 0) continue;
+						graph.onPipeAdd(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
+					}
+					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeComplex.blockID) {
+						if (!mod_Transport.blockPipeComplex.hasPipe(world, x + chunk.xPosition * 16, y, z + chunk.zPosition * 16)) continue;
 						graph.onPipeAdd(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
 					}
 				}
@@ -41,7 +44,10 @@ public class SaveLoadHandler implements ISaveEventHandler {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
 					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipe.blockID) {
-						if ((chunk.getBlockMetadata(x, y, z) & 7) == 0) continue;
+						graph.onPipeRemove(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
+					}
+					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeComplex.blockID) {
+						if (!mod_Transport.blockPipeComplex.hasPipe(world, x + chunk.xPosition * 16, y, z + chunk.zPosition * 16)) continue;
 						graph.onPipeRemove(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
 					}
 				}

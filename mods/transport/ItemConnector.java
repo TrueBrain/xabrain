@@ -65,7 +65,7 @@ public class ItemConnector extends Item implements ITextureProvider {
 		int blockID = world.getBlockId(x, y, z);
 
 		/* Find the right block we tried to place something on */
-		if (blockID == mod_Transport.blockPipe.blockID) {
+		if (mod_Transport.blockPipe.isPipe(blockID)) {
 
 		} else if (blockID == Block.snow.blockID) {
 			side = 0;
@@ -81,21 +81,27 @@ public class ItemConnector extends Item implements ITextureProvider {
 			side ^= 0x1;
 		}
 
-		/* If there isn't a pipe here yet, try to place (an invisible) one */
-		if (world.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
+		/* If there isn't a pipe here yet, try to place a complex one */
+		if (!mod_Transport.blockPipe.isPipe(world.getBlockId(x, y, z))) {
 			if (!entityPlayer.canPlayerEdit(x, y, z)) return false;
-			if (!world.canBlockBePlacedAt(mod_Transport.blockPipe.blockID, x, y, z, false, side)) return false;
+			if (!world.canBlockBePlacedAt(mod_Transport.blockPipeComplex.blockID, x, y, z, false, side)) return false;
 
-			if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, 0)) return false;
+			if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipeComplex.blockID, 0)) return false;
 
-			if (world.getBlockId(x, y, z) == mod_Transport.blockPipe.blockID) {
-				mod_Transport.blockPipe.onBlockPlaced(world, x, y, z, side);
-				mod_Transport.blockPipe.onBlockPlacedBy(world, x, y, z, entityPlayer);
+			if (world.getBlockId(x, y, z) == mod_Transport.blockPipeComplex.blockID) {
+				mod_Transport.blockPipeComplex.onBlockPlaced(world, x, y, z, side);
+				mod_Transport.blockPipeComplex.onBlockPlacedBy(world, x, y, z, entityPlayer);
 			}
+		}
+		/* If the current block is a simple pipe, upgrade it to a complex */
+		if (world.getBlockId(x, y, z) != mod_Transport.blockPipeComplex.blockID) {
+			if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipeComplex.blockID, world.getBlockMetadata(x, y, z))) return false;
+			TileEntityPipe te = mod_Transport.blockPipeComplex.getTileEntity(world, x, y, z);
+			te.makePipe();
 		}
 
 		/* Now place the connector here too */
-		mod_Transport.blockPipe.placeConnector(world, x, y, z, side, (byte) this.getMetadata(itemStack.getItemDamage()));
+		mod_Transport.blockPipeComplex.placeConnector(world, x, y, z, side, (byte) this.getMetadata(itemStack.getItemDamage()));
 
 		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipe.stepSound.getStepSound(),
 				(mod_Transport.blockPipe.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipe.stepSound.getPitch() * 0.8F);

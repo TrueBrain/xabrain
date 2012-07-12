@@ -3,6 +3,7 @@ package xabrain.mods.transport;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.ItemBlock;
+import net.minecraft.src.ItemDye;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.World;
 
@@ -20,12 +21,12 @@ public class ItemPipe extends ItemBlock {
 
 	@Override
 	public int getMetadata(int metadata) {
-		return metadata + 1;
+		return metadata;
 	}
 
 	@Override
 	public String getItemNameIS(ItemStack itemStack) {
-		return super.getItemName() + "." + mod_Transport.pipeNames[itemStack.getItemDamage()];
+		return super.getItemName() + "." + ItemDye.dyeColorNames[itemStack.getItemDamage()];
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class ItemPipe extends ItemBlock {
 		int blockID = world.getBlockId(x, y, z);
 
 		/* Find the right block we tried to place something on */
-		if (blockID == this.shiftedIndex && mod_Transport.blockPipe.getPipeType(world, x, y, z) == 0) {
+		if (blockID == mod_Transport.blockPipeComplex.blockID && !mod_Transport.blockPipeComplex.hasPipe(world, x, y, z)) {
 
 		} else if (blockID != Block.snow.blockID && blockID != Block.vine.blockID && blockID != Block.tallGrass.blockID && blockID != Block.deadBush.blockID
 				&& (Block.blocksList[blockID] != null && !Block.blocksList[blockID].isBlockReplaceable(world, x, y, z))) {
@@ -53,13 +54,10 @@ public class ItemPipe extends ItemBlock {
 			if (side == 5) ++x;
 		}
 
-		/*
-		 * If it was a pipe block, but it contains a placeholder, make it a real
-		 * pipe now
-		 */
-		if (world.getBlockId(x, y, z) == this.shiftedIndex && mod_Transport.blockPipe.getPipeType(world, x, y, z) == 0) {
-			mod_Transport.blockPipe.setPipeType(world, x, y, z, this.getMetadata(itemStack.getItemDamage()));
-			Graph.getGraph(world).onPipeAdd(x, y, z);
+		/* If this was a complex pipe without a real pipe, add a pipe now */
+		if (world.getBlockId(x, y, z) == mod_Transport.blockPipeComplex.blockID && !mod_Transport.blockPipeComplex.hasPipe(world, x, y, z)) {
+			mod_Transport.blockPipeComplex.makePipe(world, x, y, z, this.getMetadata(itemStack.getItemDamage()));
+			world.notifyBlockChange(x, y, z, mod_Transport.blockPipeComplex.blockID);
 
 			if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
 			return true;

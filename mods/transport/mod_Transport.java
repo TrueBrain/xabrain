@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.minecraft.src.Block;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemDye;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.RenderBlocks;
@@ -14,7 +15,6 @@ import net.minecraft.src.forge.MinecraftForge;
 import net.minecraft.src.forge.NetworkMod;
 
 public class mod_Transport extends NetworkMod {
-	public static final String[] pipeNames = new String[] { "Small", "Medium", "Large", "Huge" };
 	public static final String[] connectorNames = new String[] { "Mk1", "Mk2", "Mk3", "Mk4" };
 	public static final String[] moduleNames = new String[] { "Extract", "Deliver" };
 
@@ -23,6 +23,7 @@ public class mod_Transport extends NetworkMod {
 	public static mod_Transport instance;
 
 	public static BlockPipe blockPipe;
+	public static BlockPipeComplex blockPipeComplex;
 	public static ItemConnector itemConnector;
 	public static ItemModule itemModule;
 	public static int renderTypePipe;
@@ -48,6 +49,7 @@ public class mod_Transport extends NetworkMod {
 		cfg.load();
 
 		blockPipe = new BlockPipe(cfg.getOrCreateBlockIdProperty("pipe", 2001).getInt(2001));
+		blockPipeComplex = new BlockPipeComplex(cfg.getOrCreateBlockIdProperty("pipeComplex", 2002).getInt(2002));
 		itemConnector = new ItemConnector(cfg.getOrCreateIntProperty("connectors", Configuration.CATEGORY_ITEM, 20001).getInt(20001));
 		itemModule = new ItemModule(cfg.getOrCreateIntProperty("modules", Configuration.CATEGORY_ITEM, 20002).getInt(20002));
 
@@ -65,12 +67,13 @@ public class mod_Transport extends NetworkMod {
 
 	private void registerAll() {
 		ModLoader.registerBlock(blockPipe, ItemPipe.class);
+		ModLoader.registerBlock(blockPipeComplex, ItemPipe.class);
 		ModLoader.registerTileEntity(TileEntityPipe.class, "transport.pipe");
 		ModLoader.registerEntityID(EntityPacket.class, "entity.packet", ModLoader.getUniqueEntityId());
 		MinecraftForge.registerEntity(EntityPacket.class, this, 1, 64, 20, true);
 
-		for (int i = 0; i < pipeNames.length; i++) {
-			ModLoader.addName(new ItemStack(blockPipe, 1, i), pipeNames[i] + " Pipe");
+		for (int i = 0; i < ItemDye.dyeColorNames.length; i++) {
+			ModLoader.addName(new ItemStack(blockPipe, 1, i), ItemDye.dyeColorNames[i] + " Pipe");
 		}
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);

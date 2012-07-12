@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.minecraft.src.Block;
 import net.minecraft.src.DamageSource;
 import net.minecraft.src.Entity;
 import net.minecraft.src.EntityItem;
@@ -146,28 +147,34 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 	}
 
 	public int onCenterReached(int x, int y, int z, int orientation) {
+		int blockID = worldObj.getBlockId(x, y, z);
+
 		/* Sanity check */
-		if (worldObj.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
+		if (!mod_Transport.blockPipe.isPipe(blockID)) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
 			return -1;
 		}
+		BlockPipe block = (BlockPipe) Block.blocksList[blockID];
 
-		orientation = mod_Transport.blockPipe.getPacketOrientation(worldObj, x, y, z, orientation, item);
+		orientation = block.getPacketOrientation(worldObj, x, y, z, orientation, item);
 		if (item.stackSize == 0) setDead();
 		return orientation;
 	}
 
 	public int onConnectorReached(int x, int y, int z, int orientation) {
+		int blockID = worldObj.getBlockId(x, y, z);
+
 		/* Sanity check */
-		if (worldObj.getBlockId(x, y, z) != mod_Transport.blockPipe.blockID) {
+		if (!mod_Transport.blockPipe.isPipe(blockID)) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
 			return -1;
 		}
+		BlockPipe block = (BlockPipe) Block.blocksList[blockID];
 
 		/* Check if we have connectors */
-		TileEntityPipe te = mod_Transport.blockPipe.getTileEntity(worldObj, x, y, z);
+		TileEntityPipe te = block.getTileEntity(worldObj, x, y, z);
 		if (te == null) return -1;
 
 		/* Let the connector handle the item */

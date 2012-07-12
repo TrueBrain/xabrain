@@ -3,24 +3,20 @@ package xabrain.mods.transport.client;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.RenderBlocks;
 import xabrain.mods.transport.BlockPipe;
-import xabrain.mods.transport.Graph;
-import xabrain.mods.transport.GraphNode;
-import xabrain.mods.transport.GraphPoint;
 import xabrain.mods.transport.TileEntityPipe;
-import xabrain.mods.transport.mod_Transport;
 
 public class RenderPipe {
 	public static boolean renderBlock(RenderBlocks renderer, IBlockAccess world, int x, int y, int z, BlockPipe block) {
-		int type = block.getPipeType(world, x, y, z);
+		boolean hasPipe = block.hasPipe(world, x, y, z);
 		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
+		int color = world.getBlockMetadata(x, y, z);
 
 		/* Update the connections */
 		block.setBlockBoundsBasedOnState(world, x, y, z);
 
-		GraphPoint p = Graph.getGraph(mod_Transport.proxy.getCurrentWorld()).getPoint(new GraphNode(x, y, z));
-		renderer.overrideBlockTexture = p == null ? 0 : (p.isRouter() ? 1 : 2);
-		if (type != 0) renderPipe(renderer, world, x, y, z, block, centerMin, centerMax);
+		renderer.overrideBlockTexture = color;
+		if (hasPipe) renderPipe(renderer, world, x, y, z, block, centerMin, centerMax);
 
 		TileEntityPipe te = block.getTileEntity(world, x, y, z);
 		if (te != null) {
@@ -60,34 +56,34 @@ public class RenderPipe {
 			}
 
 			/* Draw the pipes from the center to the connectors */
-			if (type != 0) {
+			if (hasPipe) {
 				if (te.hasConnector(0)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(centerMin, 0.1f, centerMin, centerMax, centerMin, centerMax);
 					renderer.renderStandardBlock(block, x, y, z);
 				}
 				if (te.hasConnector(1)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(centerMin, centerMax, centerMin, centerMax, 0.9f, centerMax);
 					renderer.renderStandardBlock(block, x, y, z);
 				}
 				if (te.hasConnector(2)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(centerMin, centerMin, 0.1f, centerMax, centerMax, centerMin);
 					renderer.renderStandardBlock(block, x, y, z);
 				}
 				if (te.hasConnector(3)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 0.9f);
 					renderer.renderStandardBlock(block, x, y, z);
 				}
 				if (te.hasConnector(4)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(0.1f, centerMin, centerMin, centerMin, centerMax, centerMax);
 					renderer.renderStandardBlock(block, x, y, z);
 				}
 				if (te.hasConnector(5)) {
-					renderer.overrideBlockTexture = type - 1;
+					renderer.overrideBlockTexture = color;
 					block.setBlockBounds(centerMax, centerMin, centerMin, 0.9f, centerMax, centerMax);
 					renderer.renderStandardBlock(block, x, y, z);
 				}

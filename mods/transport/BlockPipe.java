@@ -7,11 +7,10 @@ import java.util.Random;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityLiving;
-import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
+import net.minecraft.src.ItemDye;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
-import net.minecraft.src.TileEntity;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
 
@@ -38,17 +37,17 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public int damageDropped(int metadata) {
-		return (metadata & 3) - 1;
+		return metadata;
 	}
 
 	@Override
 	public int quantityDropped(int meta, int fortune, Random random) {
-		return (meta & 7) == 0 ? 0 : 1;
+		return 1;
 	}
 
 	@Override
 	public void addCreativeItems(ArrayList itemList) {
-		for (int i = 0; i < mod_Transport.pipeNames.length; i++) {
+		for (int i = 0; i < ItemDye.dyeColorNames.length; i++) {
 			itemList.add(new ItemStack(this, 1, i));
 		}
 	}
@@ -69,28 +68,8 @@ public class BlockPipe extends Block implements ITextureProvider {
 	}
 
 	@Override
-	public boolean blockActivated(World world, int x, int y, int z, EntityPlayer entityPlayer) {
-		/* Don't open the GUI if we are sneaking */
-		if (entityPlayer.isSneaking()) return false;
-
-		TileEntityPipe te = getTileEntity(world, x, y, z);
-		if (te == null) return false;
-
-		/*
-		 * XXX -- Temporary, till I figured out how I can see which side you
-		 * selected
-		 */
-		int i;
-		for (i = 0; i < 6; i++) {
-			if (te.hasConnector(i)) break;
-		}
-		entityPlayer.openGui(mod_Transport.instance, i, world, x, y, z);
-		return true;
-	}
-
-	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int type = this.getPipeType(world, x, y, z);
+		boolean hasPipe = this.hasPipe(world, x, y, z);
 		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
@@ -103,7 +82,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 		connectedEast = false;
 		connectedWest = false;
 
-		if (type != 0) {
+		if (hasPipe) {
 			connectedNorth = canConnectPipeTo(world, x - 1, y, z, 5) && (te == null || !te.hasConnector(4));
 			connectedSouth = canConnectPipeTo(world, x + 1, y, z, 4) && (te == null || !te.hasConnector(5));
 			connectedTop = canConnectPipeTo(world, x, y - 1, z, 1) && (te == null || !te.hasConnector(0));
@@ -112,7 +91,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			connectedWest = canConnectPipeTo(world, x, y, z + 1, 2) && (te == null || !te.hasConnector(3));
 		}
 
-		if (type != 0) {
+		if (hasPipe) {
 			minX = centerMin;
 			minY = centerMin;
 			minZ = centerMin;
@@ -196,7 +175,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
-		int type = this.getPipeType(world, x, y, z);
+		boolean hasPipe = this.hasPipe(world, x, y, z);
 		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
 		float centerMax = 0.5f + (0.0625f * 2) + 0.03125f;
 
@@ -235,7 +214,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			}
 
 			/* Draw the pipes from the center to the connectors */
-			if (type != 0) {
+			if (hasPipe) {
 				if (te.hasConnector(0)) {
 					setBlockBounds(centerMin, 0.1f, centerMin, centerMax, centerMin, centerMax);
 					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
@@ -263,7 +242,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			}
 		}
 
-		if (type == 0) return;
+		if (!hasPipe) return;
 
 		/* Center of pipe */
 		setBlockBounds(centerMin, centerMin, centerMin, centerMax, centerMax, centerMax);
@@ -306,41 +285,48 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z, int side) {
 		int blockID = world.getBlockId(x, y, z);
-		if (this.blockID != blockID) return false;
-		if (getPipeType(world, x, y, z) == 0) return false;
 
-		TileEntityPipe te = getTileEntity(world, x, y, z);
+		if (!isPipe(blockID)) return false;
+		BlockPipe block = (BlockPipe) Block.blocksList[blockID];
+
+		if (!block.hasPipe(world, x, y, z)) return false;
+
+		TileEntityPipe te = block.getTileEntity(world, x, y, z);
 		if (te != null && te.hasConnector(side)) return false;
 
 		return true;
 	}
 
-	public int getPipeType(IBlockAccess world, int x, int y, int z) {
-		/* The high bit is used to indicate we have a TE attached */
-		int meta = world.getBlockMetadata(x, y, z);
-		return meta & 7;
+	public boolean isPipe(int blockID) {
+		if (blockID == mod_Transport.blockPipe.blockID) return true;
+		if (blockID == mod_Transport.blockPipeComplex.blockID) return true;
+		return false;
 	}
 
-	public void setPipeType(World world, int x, int y, int z, int type) {
-		/* Reset the type, but don't touch the high bit */
-		int meta = world.getBlockMetadata(x, y, z);
-		world.setBlockMetadataWithNotify(x, y, z, (type & 7) | (meta & 8));
-	}
-
-	public boolean placeConnector(World world, int x, int y, int z, int side, byte type) {
-		/* Set the high bit if needed */
-		int meta = world.getBlockMetadata(x, y, z);
-		if (!this.hasTileEntity(meta)) world.setBlockMetadataWithNotify(x, y, z, meta | 8);
-
-		/* Get the TE */
-		TileEntityPipe te = getTileEntity(world, x, y, z);
-
-		/* Set the connector */
-		if (te.hasConnector(side)) return false;
-		te.setConnector(side, type);
-		world.notifyBlockChange(x, y, z, this.blockID);
-
+	public boolean hasPipe(IBlockAccess world, int x, int y, int z) {
 		return true;
+	}
+
+	public TileEntityPipe getTileEntity(IBlockAccess world, int x, int y, int z) {
+		return null;
+	}
+
+	@Override
+	public boolean hasTileEntity(int metadata) {
+		return false;
+	}
+
+	@Override
+	public void onBlockRemoval(World world, int x, int y, int z) {
+		Graph.getGraph(world).onPipeRemove(x, y, z);
+	}
+
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving entityLiving) {
+		if (mod_Transport.proxy.isRemote()) return;
+
+		if (!hasPipe(world, x, y, z)) return;
+		Graph.getGraph(world).onPipeAdd(x, y, z);
 	}
 
 	public int getPacketOrientation(World world, int x, int y, int z, int orientation, ItemStack itemStack) {
@@ -364,41 +350,5 @@ public class BlockPipe extends Block implements ITextureProvider {
 		}
 
 		return directions.get(random.nextInt(directions.size()));
-	}
-
-	@Override
-	public void onBlockRemoval(World world, int x, int y, int z) {
-		Graph.getGraph(world).onPipeRemove(x, y, z);
-
-		TileEntityPipe te = getTileEntity(world, x, y, z);
-		if (te != null) {
-			for (int i = 0; i < 6; i++) {
-				if (!te.hasConnector(i)) continue;
-
-				dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.itemConnector.shiftedIndex, 1, mod_Transport.itemConnector.damageDropped(te.getConnector(i).type)));
-			}
-		}
-	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLiving entityLiving) {
-		if (mod_Transport.proxy.isRemote()) return;
-
-		if (getPipeType(world, x, y, z) == 0) return;
-		Graph.getGraph(world).onPipeAdd(x, y, z);
-	}
-
-	public TileEntityPipe getTileEntity(IBlockAccess world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-		if (!hasTileEntity(meta)) return null;
-		return (TileEntityPipe) world.getBlockTileEntity(x, y, z);
-	}
-
-	public boolean hasTileEntity(int metadata) {
-		return (metadata & 8) != 0;
-	}
-
-	public TileEntity getTileEntity(int metadata) {
-		return new TileEntityPipe();
 	}
 }

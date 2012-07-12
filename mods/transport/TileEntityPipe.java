@@ -12,6 +12,15 @@ import net.minecraft.src.TileEntity;
 
 public class TileEntityPipe extends TileEntity {
 	private Connector[] connectors = new Connector[6];
+	private boolean hasPipe = false;
+
+	public boolean hasPipe() {
+		return hasPipe;
+	}
+
+	public void makePipe() {
+		hasPipe = true;
+	}
 
 	public void setConnector(int side, byte type) {
 		connectors[side] = (type == 0) ? null : new Connector(this, side, type);
@@ -26,6 +35,8 @@ public class TileEntityPipe extends TileEntity {
 	}
 
 	public void handlePacketData(DataInputStream dis) throws IOException {
+		this.hasPipe = dis.readBoolean();
+
 		for (int i = 0; i < 6; i++) {
 			byte type = dis.readByte();
 			this.connectors[i] = (type == 0) ? null : new Connector(this, i, type);
@@ -33,6 +44,8 @@ public class TileEntityPipe extends TileEntity {
 	}
 
 	public void writePacketData(DataOutputStream dos) throws IOException {
+		dos.writeBoolean(this.hasPipe);
+
 		for (int i = 0; i < 6; i++) {
 			dos.writeByte(connectors[i] == null ? 0 : connectors[i].type);
 		}
@@ -47,6 +60,7 @@ public class TileEntityPipe extends TileEntity {
 	@Override
 	public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
 		super.readFromNBT(par1NBTTagCompound);
+		hasPipe = par1NBTTagCompound.getBoolean("HasPipe");
 		NBTTagList list = par1NBTTagCompound.getTagList("Connectors");
 
 		/* Get where our connectors are */
@@ -63,6 +77,7 @@ public class TileEntityPipe extends TileEntity {
 	@Override
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
 		super.writeToNBT(par1NBTTagCompound);
+		par1NBTTagCompound.setBoolean("HasPipe", hasPipe);
 		NBTTagList list = new NBTTagList();
 
 		/* Set where our connectors are */
