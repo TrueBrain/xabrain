@@ -64,17 +64,17 @@ public class ItemPipe extends ItemBlock {
 		}
 
 		if (!entityPlayer.canPlayerEdit(x, y, z)) return false;
-		if (!world.canBlockBePlacedAt(mod_Transport.blockPipe.blockID, x, y, z, false, side)) return false;
+		if (!world.canBlockBePlacedAt(mod_Transport.blockPipeSimple.blockID, x, y, z, false, side)) return false;
 
-		if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, this.getMetadata(itemStack.getItemDamage()))) return false;
+		if (!world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipeSimple.blockID, this.getMetadata(itemStack.getItemDamage()))) return false;
 
-		if (world.getBlockId(x, y, z) == mod_Transport.blockPipe.blockID) {
-			mod_Transport.blockPipe.onBlockPlaced(world, x, y, z, side);
-			mod_Transport.blockPipe.onBlockPlacedBy(world, x, y, z, entityPlayer);
+		if (world.getBlockId(x, y, z) == mod_Transport.blockPipeSimple.blockID) {
+			mod_Transport.blockPipeSimple.onBlockPlaced(world, x, y, z, side);
+			mod_Transport.blockPipeSimple.onBlockPlacedBy(world, x, y, z, entityPlayer);
 		}
 
-		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipe.stepSound.getStepSound(),
-				(mod_Transport.blockPipe.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipe.stepSound.getPitch() * 0.8F);
+		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipeSimple.stepSound.getStepSound(),
+				(mod_Transport.blockPipeSimple.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipeSimple.stepSound.getPitch() * 0.8F);
 		if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
 		return true;
 	}

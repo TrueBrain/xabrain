@@ -22,7 +22,7 @@ public class mod_Transport extends NetworkMod {
 	public static IProxy proxy;
 	public static mod_Transport instance;
 
-	public static BlockPipe blockPipe;
+	public static BlockPipeSimple blockPipeSimple;
 	public static BlockPipeComplex blockPipeComplex;
 	public static ItemConnector itemConnector;
 	public static ItemModule itemModule;
@@ -48,7 +48,7 @@ public class mod_Transport extends NetworkMod {
 		Configuration cfg = new Configuration(cfgFile);
 		cfg.load();
 
-		blockPipe = new BlockPipe(cfg.getOrCreateBlockIdProperty("pipe", 2001).getInt(2001));
+		blockPipeSimple = new BlockPipeSimple(cfg.getOrCreateBlockIdProperty("pipeSimple", 2001).getInt(2001));
 		blockPipeComplex = new BlockPipeComplex(cfg.getOrCreateBlockIdProperty("pipeComplex", 2002).getInt(2002));
 		itemConnector = new ItemConnector(cfg.getOrCreateIntProperty("connectors", Configuration.CATEGORY_ITEM, 20001).getInt(20001));
 		itemModule = new ItemModule(cfg.getOrCreateIntProperty("modules", Configuration.CATEGORY_ITEM, 20002).getInt(20002));
@@ -66,14 +66,14 @@ public class mod_Transport extends NetworkMod {
 	}
 
 	private void registerAll() {
-		ModLoader.registerBlock(blockPipe, ItemPipe.class);
+		ModLoader.registerBlock(blockPipeSimple, ItemPipe.class);
 		ModLoader.registerBlock(blockPipeComplex, ItemPipe.class);
 		ModLoader.registerTileEntity(TileEntityPipe.class, "transport.pipe");
 		ModLoader.registerEntityID(EntityPacket.class, "entity.packet", ModLoader.getUniqueEntityId());
 		MinecraftForge.registerEntity(EntityPacket.class, this, 1, 64, 20, true);
 
 		for (int i = 0; i < ItemDye.dyeColorNames.length; i++) {
-			ModLoader.addName(new ItemStack(blockPipe, 1, i), ItemDye.dyeColorNames[i].substring(0, 1).toUpperCase().concat(ItemDye.dyeColorNames[i].substring(1)) + " Pipe");
+			ModLoader.addName(new ItemStack(blockPipeSimple, 1, i), ItemDye.dyeColorNames[i].substring(0, 1).toUpperCase().concat(ItemDye.dyeColorNames[i].substring(1)) + " Pipe");
 		}
 		for (int i = 0; i < connectorNames.length; i++) {
 			ModLoader.addName(new ItemStack(itemConnector, 1, i), "Connector " + connectorNames[i]);

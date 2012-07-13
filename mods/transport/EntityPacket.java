@@ -150,7 +150,7 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		int blockID = worldObj.getBlockId(x, y, z);
 
 		/* Sanity check */
-		if (!mod_Transport.blockPipe.isPipe(blockID)) {
+		if (!mod_Transport.blockPipeSimple.isPipe(blockID)) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
 			return -1;
@@ -166,7 +166,7 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 		int blockID = worldObj.getBlockId(x, y, z);
 
 		/* Sanity check */
-		if (!mod_Transport.blockPipe.isPipe(blockID)) {
+		if (!mod_Transport.blockPipeSimple.isPipe(blockID)) {
 			System.out.println("ERROR: EntityPacket outside BlockPipe. Killing content.");
 			setDead();
 			return -1;

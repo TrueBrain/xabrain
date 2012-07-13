@@ -24,7 +24,7 @@ public class SaveLoadHandler implements ISaveEventHandler {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
-					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipe.blockID) {
+					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeSimple.blockID) {
 						graph.onPipeAdd(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
 					}
 					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeComplex.blockID) {
@@ -43,7 +43,7 @@ public class SaveLoadHandler implements ISaveEventHandler {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				for (int y = 0; y < 256; y++) {
-					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipe.blockID) {
+					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeSimple.blockID) {
 						graph.onPipeRemove(x + chunk.xPosition * 16, y, z + chunk.zPosition * 16);
 					}
 					if (chunk.getBlockID(x, y, z) == mod_Transport.blockPipeComplex.blockID) {

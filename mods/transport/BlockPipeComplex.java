@@ -1,9 +1,5 @@
 package xabrain.mods.transport;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import net.minecraft.src.Block;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.IBlockAccess;
 import net.minecraft.src.ItemStack;
@@ -15,14 +11,6 @@ import net.minecraft.src.World;
 public class BlockPipeComplex extends BlockPipe {
 	public BlockPipeComplex(int blockID) {
 		super(blockID);
-	}
-
-	@Override
-	public void addCreativeItems(ArrayList itemList) {}
-
-	@Override
-	public int quantityDropped(int meta, int fortune, Random random) {
-		return 0;
 	}
 
 	@Override
@@ -98,7 +86,7 @@ public class BlockPipeComplex extends BlockPipe {
 			/* This tile has no connectors anymore; downgrade to a normal block */
 			if (!hasConnector) {
 				if (te.hasPipe()) {
-					world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipe.blockID, world.getBlockMetadata(x, y, z));
+					world.setBlockAndMetadataWithNotify(x, y, z, mod_Transport.blockPipeSimple.blockID, world.getBlockMetadata(x, y, z));
 				} else {
 					world.setBlockWithNotify(x, y, z, 0);
 				}
@@ -115,13 +103,14 @@ public class BlockPipeComplex extends BlockPipe {
 			for (int i = 0; i < 6; i++) {
 				if (!te.hasConnector(i)) continue;
 
-				if (!player.capabilities.isCreativeMode) dropConnector(te, part, world, x, y, z);
-				dropModules(te, part, world, x, y, z);
+				if (!player.capabilities.isCreativeMode) dropConnector(te, i, world, x, y, z);
+				dropModules(te, i, world, x, y, z);
 			}
 		}
 
 		/* Drop the pipe if there was one */
-		if (!player.capabilities.isCreativeMode && hasPipe(world, x, y, z)) dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.blockPipe.blockID, 1, world.getBlockMetadata(x, y, z)));
+		if (!player.capabilities.isCreativeMode && hasPipe(world, x, y, z))
+			dropBlockAsItem_do(world, x, y, z, new ItemStack(mod_Transport.blockPipeSimple.blockID, 1, world.getBlockMetadata(x, y, z)));
 
 		return super.removeBlockByPlayer(world, player, x, y, z);
 	}
@@ -155,85 +144,80 @@ public class BlockPipeComplex extends BlockPipe {
 		Vec3D lookDistance = position.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
 		/* Do a raytrace to see which connector we want to open */
-		MovingObjectPosition res = world.rayTraceBlocks_do(position, lookDistance, true);
+		MovingObjectPosition res = collisionRayTrace(world, x, y, z, position, lookDistance);
 		if (res == null) return -1;
 
 		return res.subHit;
 	}
 
+	private MovingObjectPosition traceConnector(TileEntityPipe te, int side, World world, int x, int y, int z, Vec3D par5Vec3D, Vec3D par6Vec3D) {
+		if (!te.hasConnector(side)) return null;
+
+		float xMin = 0.2f;
+		float yMin = 0.2f;
+		float zMin = 0.2f;
+		float xMax = 0.8f;
+		float yMax = 0.8f;
+		float zMax = 0.8f;
+
+		switch (side) {
+			case 0:
+				yMin = 0.0f;
+				yMax = 0.1f;
+				break;
+
+			case 1:
+				yMin = 0.9f;
+				yMax = 1.0f;
+				break;
+
+			case 2:
+				zMin = 0.0f;
+				zMax = 0.1f;
+				break;
+
+			case 3:
+				zMin = 0.9f;
+				zMax = 1.0f;
+				break;
+
+			case 4:
+				xMin = 0.0f;
+				xMax = 0.1f;
+				break;
+
+			case 5:
+				xMin = 0.9f;
+				xMax = 1.0f;
+				break;
+		}
+
+		this.setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
+		MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
+		if (res != null) res.subHit = side;
+
+		return res;
+	}
+
 	@Override
 	public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3D par5Vec3D, Vec3D par6Vec3D) {
-		BlockPipe block = (BlockPipe) Block.blocksList[world.getBlockId(x, y, z)];
-		TileEntityPipe te = block.getTileEntity(world, x, y, z);
-		MovingObjectPosition best = null;
+		TileEntityPipe te = this.getTileEntity(world, x, y, z);
+		MovingObjectPosition res, best = null;
 
-		float sideMin = 0.2f;
-		float sideMax = 0.8f;
+		float pipeMin = 0.5f - 0.15625f - 0.05f;
+		float pipeMax = 0.5f + 0.15625f + 0.05f;
 
-		if (te == null) return null;
-
-		if (te.hasConnector(0)) {
-			block.setBlockBounds(sideMin, 0.0f, sideMin, sideMax, 0.1f, sideMax);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 0;
-				if (res.sideHit == 0) return res;
-			}
-
-			if (best == null) best = res;
+		if (te.hasPipe()) {
+			this.setBlockBounds(pipeMin, pipeMin, pipeMin, pipeMax, pipeMax, pipeMax);
+			best = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
 		}
-		if (te.hasConnector(1)) {
-			block.setBlockBounds(sideMin, 0.9f, sideMin, sideMax, 1.0f, sideMax);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 1;
-				if (res.sideHit == 1) return res;
-			}
 
-			if (best == null) best = res;
-		}
-		if (te.hasConnector(2)) {
-			block.setBlockBounds(sideMin, sideMin, 0.0f, sideMax, sideMax, 0.1f);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 2;
-				if (res.sideHit == 2) return res;
-			}
-
-			if (best == null) best = res;
-		}
-		if (te.hasConnector(3)) {
-			block.setBlockBounds(sideMin, sideMin, 0.9f, sideMax, sideMax, 1.0f);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 3;
-				if (res.sideHit == 3) return res;
-			}
-
-			if (best == null) best = res;
-		}
-		if (te.hasConnector(4)) {
-			block.setBlockBounds(0.0f, sideMin, sideMin, 0.1f, sideMax, sideMax);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 4;
-				if (res.sideHit == 4) return res;
-			}
-
-			if (best == null) best = res;
-		}
-		if (te.hasConnector(5)) {
-			block.setBlockBounds(0.9f, sideMin, sideMin, 1.0f, sideMax, sideMax);
-			MovingObjectPosition res = super.collisionRayTrace(world, x, y, z, par5Vec3D, par6Vec3D);
-			if (res != null) {
-				res.subHit = 5;
-				if (res.sideHit == 5) return res;
-			}
-
+		for (int i = 0; i < 6; i++) {
+			res = traceConnector(te, i, world, x, y, z, par5Vec3D, par6Vec3D);
+			if (res != null && res.sideHit == i) return res;
 			if (best == null) best = res;
 		}
 
 		return best;
 	}
-
 }

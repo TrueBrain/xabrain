@@ -65,12 +65,12 @@ public class ItemConnector extends Item implements ITextureProvider {
 		int blockID = world.getBlockId(x, y, z);
 
 		/* Find the right block we tried to place something on */
-		if (mod_Transport.blockPipe.isPipe(blockID)) {
+		if (mod_Transport.blockPipeSimple.isPipe(blockID)) {
 
-		} else if (blockID == Block.snow.blockID) {
+		} else if (blockID == Block.snow.blockID || blockID == Block.vine.blockID || blockID == Block.tallGrass.blockID || blockID == Block.deadBush.blockID
+				|| (Block.blocksList[blockID] != null && Block.blocksList[blockID].isBlockReplaceable(world, x, y, z))) {
 			side = 0;
-		} else if (blockID != Block.vine.blockID && blockID != Block.tallGrass.blockID && blockID != Block.deadBush.blockID
-				&& (Block.blocksList[blockID] != null && !Block.blocksList[blockID].isBlockReplaceable(world, x, y, z))) {
+		} else {
 			if (side == 0) --y;
 			if (side == 1) ++y;
 			if (side == 2) --z;
@@ -82,7 +82,7 @@ public class ItemConnector extends Item implements ITextureProvider {
 		}
 
 		/* If there isn't a pipe here yet, try to place a complex one */
-		if (!mod_Transport.blockPipe.isPipe(world.getBlockId(x, y, z))) {
+		if (!mod_Transport.blockPipeSimple.isPipe(world.getBlockId(x, y, z))) {
 			if (!entityPlayer.canPlayerEdit(x, y, z)) return false;
 			if (!world.canBlockBePlacedAt(mod_Transport.blockPipeComplex.blockID, x, y, z, false, side)) return false;
 
@@ -100,11 +100,15 @@ public class ItemConnector extends Item implements ITextureProvider {
 			te.makePipe();
 		}
 
+		/* If we already have one, don't place a new one */
+		TileEntityPipe te = mod_Transport.blockPipeComplex.getTileEntity(world, x, y, z);
+		if (te.hasConnector(side)) return false;
+
 		/* Now place the connector here too */
 		mod_Transport.blockPipeComplex.placeConnector(world, x, y, z, side, (byte) this.getMetadata(itemStack.getItemDamage()));
 
-		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipe.stepSound.getStepSound(),
-				(mod_Transport.blockPipe.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipe.stepSound.getPitch() * 0.8F);
+		world.playSoundEffect((double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), mod_Transport.blockPipeSimple.stepSound.getStepSound(),
+				(mod_Transport.blockPipeSimple.stepSound.getVolume() + 1.0F) / 2.0F, mod_Transport.blockPipeSimple.stepSound.getPitch() * 0.8F);
 		if (!entityPlayer.capabilities.isCreativeMode) --itemStack.stackSize;
 		return true;
 	}

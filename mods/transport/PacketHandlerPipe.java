@@ -61,7 +61,7 @@ public class PacketHandlerPipe implements IPacketHandler, IConnectionHandler {
 					return;
 				}
 
-				world.notifyBlockChange(x, y, z, mod_Transport.blockPipe.blockID);
+				world.notifyBlockChange(x, y, z, mod_Transport.blockPipeSimple.blockID);
 				break;
 
 			case 1:

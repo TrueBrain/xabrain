@@ -37,7 +37,7 @@ public class Graph {
 	}
 
 	private void pipeAddNeighbour(int x, int y, int z, int side, ArrayList<GraphNode> nodeList, ArrayList<GraphPoint> pointList) {
-		if (!mod_Transport.blockPipe.canConnectPipeTo(world, x, y, z, side, null)) return;
+		if (!mod_Transport.blockPipeSimple.canConnectPipeTo(world, x, y, z, side, null)) return;
 
 		GraphNode node = new GraphNode(x, y, z);
 		GraphPoint point = getPoint(node);

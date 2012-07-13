@@ -8,19 +8,20 @@ import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EntityLiving;
 import net.minecraft.src.IBlockAccess;
-import net.minecraft.src.ItemDye;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.Material;
 import net.minecraft.src.World;
 import net.minecraft.src.forge.ITextureProvider;
 
-public class BlockPipe extends Block implements ITextureProvider {
+public abstract class BlockPipe extends Block implements ITextureProvider {
 	private Random random = new Random();
 
 	public BlockPipe(int blockID) {
 		super(blockID, 0, Material.glass);
 		setBlockName("pipe");
 		setRequiresSelfNotify();
+
+		setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	@Override
@@ -35,15 +36,11 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 	@Override
 	public int quantityDropped(int meta, int fortune, Random random) {
-		return 1;
+		return 0;
 	}
 
 	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		for (int i = 0; i < ItemDye.dyeColorNames.length; i++) {
-			itemList.add(new ItemStack(this, 1, i));
-		}
-	}
+	public void addCreativeItems(ArrayList itemList) {}
 
 	@Override
 	public int getRenderType() {
@@ -64,12 +61,6 @@ public class BlockPipe extends Block implements ITextureProvider {
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
-		setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-	}
-
-	@Override
 	public void getCollidingBoundingBoxes(World world, int x, int y, int z, AxisAlignedBB axisalignedbb, ArrayList arraylist) {
 		boolean hasPipe = this.hasPipe(world, x, y, z);
 		float centerMin = 0.5f - (0.0625f * 2) - 0.03125f;
@@ -77,59 +68,22 @@ public class BlockPipe extends Block implements ITextureProvider {
 
 		TileEntityPipe te = getTileEntity(world, x, y, z);
 		if (te != null) {
-			float sideMin = 0.2f;
-			float sideMax = 0.8f;
+			/* Create collide boxes for the connectors */
+			for (int i = 0; i < 6; i++) {
+				if (!te.hasConnector(i)) continue;
 
-			/* Draw the connectors */
-			if (te.hasConnector(0)) {
-				setBlockBounds(sideMin, 0.0f, sideMin, sideMax, 0.1f, sideMax);
-				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-			}
-			if (te.hasConnector(1)) {
-				setBlockBounds(sideMin, 0.9f, sideMin, sideMax, 1.0f, sideMax);
-				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-			}
-			if (te.hasConnector(2)) {
-				setBlockBounds(sideMin, sideMin, 0.0f, sideMax, sideMax, 0.1f);
-				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-			}
-			if (te.hasConnector(3)) {
-				setBlockBounds(sideMin, sideMin, 0.9f, sideMax, sideMax, 1.0f);
-				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-			}
-			if (te.hasConnector(4)) {
-				setBlockBounds(0.0f, sideMin, sideMin, 0.1f, sideMax, sideMax);
-				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-			}
-			if (te.hasConnector(5)) {
-				setBlockBounds(0.9f, sideMin, sideMin, 1.0f, sideMax, sideMax);
+				float[] dim = getConnectorSize(i, new float[6]);
+				setBlockBounds(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5]);
 				super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 			}
 
-			/* Draw the pipes from the center to the connectors */
+			/* Create the collide boxes for the pipes to the connectors */
 			if (hasPipe) {
-				if (te.hasConnector(0)) {
-					setBlockBounds(centerMin, 0.1f, centerMin, centerMax, centerMin, centerMax);
-					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-				}
-				if (te.hasConnector(1)) {
-					setBlockBounds(centerMin, centerMax, centerMin, centerMax, 0.9f, centerMax);
-					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-				}
-				if (te.hasConnector(2)) {
-					setBlockBounds(centerMin, centerMin, 0.1f, centerMax, centerMax, centerMin);
-					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-				}
-				if (te.hasConnector(3)) {
-					setBlockBounds(centerMin, centerMin, centerMax, centerMax, centerMax, 0.9f);
-					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-				}
-				if (te.hasConnector(4)) {
-					setBlockBounds(0.1f, centerMin, centerMin, centerMin, centerMax, centerMax);
-					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
-				}
-				if (te.hasConnector(5)) {
-					setBlockBounds(centerMax, centerMin, centerMin, 0.9f, centerMax, centerMax);
+				for (int i = 0; i < 6; i++) {
+					if (!te.hasConnector(i)) continue;
+
+					float[] dim = getPipeSize(i, new float[6]);
+					setBlockBounds(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5]);
 					super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 				}
 			}
@@ -173,7 +127,7 @@ public class BlockPipe extends Block implements ITextureProvider {
 			super.getCollidingBoundingBoxes(world, x, y, z, axisalignedbb, arraylist);
 		}
 
-		this.setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+		setBlockBounds(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	public boolean canConnectPipeTo(IBlockAccess world, int x, int y, int z, int side, TileEntityPipe teFrom) {
@@ -191,24 +145,72 @@ public class BlockPipe extends Block implements ITextureProvider {
 		return true;
 	}
 
+	public float[] getDimensions(int side, float[] dim, float startMin, float startMax, float sideMin, float sideMax) {
+		dim[0] = startMin;
+		dim[1] = startMin;
+		dim[2] = startMin;
+		dim[3] = startMax;
+		dim[4] = startMax;
+		dim[5] = startMax;
+
+		switch (side) {
+			case 0:
+				dim[1] = sideMin;
+				dim[4] = sideMax;
+				break;
+
+			case 1:
+				dim[1] = 1.0f - sideMax;
+				dim[4] = 1.0f - sideMin;
+				break;
+
+			case 2:
+				dim[2] = sideMin;
+				dim[5] = sideMax;
+				break;
+
+			case 3:
+				dim[2] = 1.0f - sideMax;
+				dim[5] = 1.0f - sideMin;
+				break;
+
+			case 4:
+				dim[0] = sideMin;
+				dim[3] = sideMax;
+				break;
+
+			case 5:
+				dim[0] = 1.0f - sideMax;
+				dim[3] = 1.0f - sideMin;
+				break;
+		}
+
+		return dim;
+	}
+
+	public float[] getPipeSize(int side, float[] dim) {
+		float centerMin = 0.5f - 0.15625f;
+		float centerMax = 0.5f + 0.15625f;
+
+		return getDimensions(side, dim, centerMin, centerMax, 0.1f, centerMin);
+	}
+
+	public float[] getConnectorSize(int side, float[] dim) {
+		return getDimensions(side, dim, 0.2f, 0.8f, 0.0f, 0.1f);
+	}
+
 	public boolean isPipe(int blockID) {
-		if (blockID == mod_Transport.blockPipe.blockID) return true;
+		if (blockID == mod_Transport.blockPipeSimple.blockID) return true;
 		if (blockID == mod_Transport.blockPipeComplex.blockID) return true;
 		return false;
 	}
 
-	public boolean hasPipe(IBlockAccess world, int x, int y, int z) {
-		return true;
-	}
+	public abstract boolean hasPipe(IBlockAccess world, int x, int y, int z);
 
-	public TileEntityPipe getTileEntity(IBlockAccess world, int x, int y, int z) {
-		return null;
-	}
+	public abstract TileEntityPipe getTileEntity(IBlockAccess world, int x, int y, int z);
 
 	@Override
-	public boolean hasTileEntity(int metadata) {
-		return false;
-	}
+	public abstract boolean hasTileEntity(int metadata);
 
 	@Override
 	public void onBlockRemoval(World world, int x, int y, int z) {
