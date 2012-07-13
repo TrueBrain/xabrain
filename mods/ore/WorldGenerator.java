@@ -23,7 +23,7 @@ public class WorldGenerator implements IWorldGenerator {
 				int x = (chunkX << 4) + random.nextInt(16);
 				int y = 10 + random.nextInt(54);
 				int z = (chunkZ << 4) + random.nextInt(16);
-				new WorldGenMinable(mod_Ore.blockOre.blockID, 8, i).generate(w, random, x, y, z);
+				new WorldGenMinable(mod_Ore.blockOre.blockID, i, 8).generate(w, random, x, y, z);
 			}
 		}
 	}
