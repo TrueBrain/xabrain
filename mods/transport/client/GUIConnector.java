@@ -42,6 +42,7 @@ public class GUIConnector extends GuiContainer {
 
 		int left = (this.width - this.xSize) / 2;
 		int top = (this.height - this.ySize) / 2;
+		top += (18 * 4 - 18 * connector.slots) / 2;
 
 		for (int i = 0; i < connector.slots; i++) {
 			if (connector.modules[i] == null) continue;
