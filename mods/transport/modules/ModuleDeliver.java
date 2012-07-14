@@ -29,10 +29,6 @@ public class ModuleDeliver extends Module {
 
 	@Override
 	public boolean accepts(ItemStack itemStack) {
-		return true;
-	}
-
-	private boolean canHaveItem(ItemStack itemStack) {
 		TileEntity te = parent.parent.worldObj.getBlockTileEntity(xConnection, yConnection, zConnection);
 
 		if (te instanceof IInventory) return addItemToInventory((IInventory) te, itemStack, parent.side, true);
