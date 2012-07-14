@@ -179,7 +179,23 @@ public class EntityPacket extends EntityItem implements ISpawnHandler {
 
 		/* Let the connector handle the item */
 		orientation = te.processConnector(orientation, item);
-		if (item.stackSize == 0) setDead();
+		if (item.stackSize == 0) {
+			setDead();
+		} else if (orientation == -1) {
+			/* Not everything could be pushed inside; drop the remaining stack */
+			float radius = 0.7F;
+			double xRandom = (double) (worldObj.rand.nextFloat() * radius) + (double) (1.0F - radius) * 0.5D;
+			double yRandom = (double) (worldObj.rand.nextFloat() * radius) + (double) (1.0F - radius) * 0.5D;
+			double zRandom = (double) (worldObj.rand.nextFloat() * radius) + (double) (1.0F - radius) * 0.5D;
+			EntityItem entityItem = new EntityItem(worldObj, (double) x + xRandom, (double) y + yRandom, (double) z + zRandom, item);
+			entityItem.delayBeforeCanPickup = 10;
+			worldObj.spawnEntityInWorld(entityItem);
+
+			setDead();
+		} else if (orientation == -2) {
+			return -1;
+		}
+
 		return orientation;
 	}
 

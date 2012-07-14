@@ -23,7 +23,10 @@ public class ModuleDeliver extends Module {
 
 	@Override
 	public int receive(ItemStack itemStack) {
-		pushItem(itemStack);
+		TileEntity te = parent.parent.worldObj.getBlockTileEntity(xConnection, yConnection, zConnection);
+
+		if (te instanceof IInventory) addItemToInventory((IInventory) te, itemStack, parent.side, false);
+
 		return -1;
 	}
 
@@ -31,14 +34,22 @@ public class ModuleDeliver extends Module {
 	public boolean accepts(ItemStack itemStack) {
 		TileEntity te = parent.parent.worldObj.getBlockTileEntity(xConnection, yConnection, zConnection);
 
-		if (te instanceof IInventory) return addItemToInventory((IInventory) te, itemStack, parent.side, true);
+		if (te instanceof IInventory) return (addItemToInventory((IInventory) te, itemStack, parent.side, true) == 0);
 
 		/* XXX -- In future, extend to types defined by other mods */
 
 		return false;
 	}
 
-	private boolean addItemToInventory(IInventory inventory, ItemStack itemStack, int side, boolean test) {
+	/**
+	 * Try to add an item to the inventory.
+	 * @param inventory The inventory to add to.
+	 * @param itemStack The stack we are trying to add.
+	 * @param side From which side we are adding.
+	 * @param test If this is a test round (no real changes).
+	 * @return The stackSize remaining after putting it in this inventory (0 if everything fitted).
+	 */
+	private int addItemToInventory(IInventory inventory, ItemStack itemStack, int side, boolean test) {
 		int start;
 		int size;
 
@@ -86,16 +97,10 @@ public class ModuleDeliver extends Module {
 				}
 			}
 
-			if (total <= 0) return true;
+			if (total <= 0) return 0;
 		}
 
-		return false;
-	}
-
-	private void pushItem(ItemStack itemStack) {
-		TileEntity te = parent.parent.worldObj.getBlockTileEntity(xConnection, yConnection, zConnection);
-
-		if (te instanceof IInventory) addItemToInventory((IInventory) te, itemStack, parent.side, false);
+		return total;
 	}
 
 	@Override

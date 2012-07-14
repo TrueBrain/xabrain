@@ -43,16 +43,14 @@ public class Connector implements IInventory {
 	}
 
 	public int receive(ItemStack item) {
-		int orientation = -1;
-
 		for (int i = 0; i < slots; i++) {
 			if (modules[i] == null) continue;
 
 			int or = modules[i].receive(item);
-			if (or != -1) orientation = -1;
+			if (or != -1) return or;
 		}
 
-		return orientation;
+		return -1;
 	}
 
 	public boolean accepts(ItemStack item) {
