@@ -1,9 +1,11 @@
 package xabrain.mods.transport.modules;
 
+import net.minecraft.src.IInventory;
 import net.minecraft.src.ItemStack;
 import net.minecraft.src.NBTTagCompound;
 import net.minecraft.src.TileEntity;
 import net.minecraft.src.TileEntityChest;
+import net.minecraft.src.forge.ISidedInventory;
 import xabrain.mods.transport.Connector;
 import xabrain.mods.transport.EntityPacket;
 
@@ -33,11 +35,40 @@ public class ModuleExtract extends Module {
 	}
 
 	private void pullItem() {
-		double xOffset, yOffset, zOffset;
+		TileEntity te = parent.parent.worldObj.getBlockTileEntity(xConnection, yConnection, zConnection);
 
-		int x = parent.parent.xCoord;
-		int y = parent.parent.yCoord;
-		int z = parent.parent.zCoord;
+		if (te instanceof IInventory) tryDispatchingItem((IInventory) te, parent.side);
+
+		/* XXX -- In future, extend to types defined by other mods */
+	}
+
+	private void tryDispatchingItem(IInventory inventory, int side) {
+		int start;
+		int size;
+
+		/* Figure out which inventory slots we can use when delivering from this side */
+		if (inventory instanceof ISidedInventory) {
+			ISidedInventory sidedInventory = (ISidedInventory) inventory;
+
+			start = sidedInventory.getStartInventorySide(side);
+			size = sidedInventory.getSizeInventorySide(side);
+		} else {
+			start = 0;
+			size = inventory.getSizeInventory();
+		}
+
+		for (int i = start; i < start + size; i++) {
+			ItemStack is = inventory.decrStackSize(i, inventory.getInventoryStackLimit());
+			if (is == null) continue;
+
+			/* XXX -- Ask the network if he can handle this packet */
+
+			dispatchItem(is);
+		}
+	}
+
+	private void dispatchItem(ItemStack itemStack) {
+		double xOffset, yOffset, zOffset;
 
 		xOffset = 0.5f;
 		yOffset = 0.5f;
@@ -45,50 +76,32 @@ public class ModuleExtract extends Module {
 
 		switch (parent.side) {
 			case 4:
-				x--;
 				xOffset = 0.1f;
 				break;
 
 			case 5:
-				x++;
 				xOffset = 0.9f;
 				break;
 
 			case 0:
-				y--;
 				yOffset = 0.1f;
 				break;
 
 			case 1:
-				y++;
 				yOffset = 0.9f;
 				break;
 
 			case 2:
-				z--;
 				zOffset = 0.1f;
 				break;
 
 			case 3:
-				z++;
 				zOffset = 0.9f;
 				break;
 		}
 
-		TileEntity te = parent.parent.worldObj.getBlockTileEntity(x, y, z);
-		if (!(te instanceof TileEntityChest)) return;
-
-		TileEntityChest tec = (TileEntityChest) te;
-		for (int i = 0; i < tec.getSizeInventory(); i++) {
-			ItemStack is = tec.decrStackSize(i, 64);
-			if (is == null) continue;
-
-			EntityPacket ei = new EntityPacket(parent.parent.worldObj, parent.parent.xCoord + xOffset, parent.parent.yCoord + yOffset, parent.parent.zCoord + zOffset, is, parent.side ^ 0x1);
-			parent.parent.worldObj.spawnEntityInWorld(ei);
-
-			/* Only pull one item per tick */
-			break;
-		}
+		EntityPacket entityPacket = new EntityPacket(parent.parent.worldObj, parent.parent.xCoord + xOffset, parent.parent.yCoord + yOffset, parent.parent.zCoord + zOffset, itemStack, parent.side ^ 0x1);
+		parent.parent.worldObj.spawnEntityInWorld(entityPacket);
 	}
 
 	@Override
