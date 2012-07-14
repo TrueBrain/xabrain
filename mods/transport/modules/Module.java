@@ -22,10 +22,47 @@ public abstract class Module {
 
 	protected Connector parent;
 	public int type;
+	protected int xConnection;
+	protected int yConnection;
+	protected int zConnection;
 
 	public Module(Integer type, Connector parent) {
 		this.type = type;
 		this.parent = parent;
+
+		calculateConnection();
+	}
+
+	private void calculateConnection() {
+		xConnection = parent.parent.xCoord;
+		yConnection = parent.parent.yCoord;
+		zConnection = parent.parent.zCoord;
+
+		switch (parent.side) {
+			case 4:
+				xConnection--;
+				break;
+
+			case 5:
+				xConnection++;
+				break;
+
+			case 0:
+				yConnection--;
+				break;
+
+			case 1:
+				yConnection++;
+				break;
+
+			case 2:
+				zConnection--;
+				break;
+
+			case 3:
+				zConnection++;
+				break;
+		}
 	}
 
 	public abstract String getName();
