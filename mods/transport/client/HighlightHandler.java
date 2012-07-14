@@ -49,7 +49,7 @@ public class HighlightHandler implements IHighlightHandler {
 			res = true;
 		}
 
-		if (target.subHit == -1 && currentItem.itemID == mod_Transport.itemConnector.shiftedIndex) {
+		if (currentItem != null && target.subHit == -1 && currentItem.itemID == mod_Transport.itemConnector.shiftedIndex) {
 			if (mod_Transport.blockPipeSimple.isPipe(blockID)) {
 
 			} else if (blockID == Block.snow.blockID || blockID == Block.vine.blockID || blockID == Block.tallGrass.blockID || blockID == Block.deadBush.blockID
