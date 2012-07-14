@@ -36,17 +36,6 @@ public class Graph {
 		return tiles.get(node);
 	}
 
-	private void pipeAddNeighbour(int x, int y, int z, int side, ArrayList<GraphNode> nodeList, ArrayList<GraphPoint> pointList) {
-		if (!mod_Transport.blockPipeSimple.canConnectPipeTo(world, x, y, z, side, null)) return;
-
-		GraphNode node = new GraphNode(x, y, z);
-		GraphPoint point = getPoint(node);
-		if (point != null) {
-			nodeList.add(node);
-			pointList.add(point);
-		}
-	}
-
 	public void printGraph() {
 		if (!DEBUG) return;
 
@@ -69,6 +58,17 @@ public class Graph {
 		System.out.println("");
 	}
 
+	private void pipeDetectNeighbour(int x, int y, int z, int side, ArrayList<GraphNode> nodeList, ArrayList<GraphPoint> pointList) {
+		if (!mod_Transport.blockPipeSimple.canConnectPipeTo(world, x, y, z, side, null)) return;
+
+		GraphNode node = new GraphNode(x, y, z);
+		GraphPoint point = getPoint(node);
+		if (point != null) {
+			nodeList.add(node);
+			pointList.add(point);
+		}
+	}
+
 	public void onPipeAdd(int x, int y, int z) {
 		GraphNode nodeNew = new GraphNode(x, y, z);
 
@@ -76,12 +76,12 @@ public class Graph {
 		ArrayList<GraphPoint> pointList = new ArrayList<GraphPoint>();
 
 		/* Detect neighbour pipes */
-		pipeAddNeighbour(x - 1, y, z, 5, nodeList, pointList);
-		pipeAddNeighbour(x + 1, y, z, 4, nodeList, pointList);
-		pipeAddNeighbour(x, y - 1, z, 1, nodeList, pointList);
-		pipeAddNeighbour(x, y + 1, z, 0, nodeList, pointList);
-		pipeAddNeighbour(x, y, z - 1, 3, nodeList, pointList);
-		pipeAddNeighbour(x, y, z + 1, 2, nodeList, pointList);
+		pipeDetectNeighbour(x - 1, y, z, 5, nodeList, pointList);
+		pipeDetectNeighbour(x + 1, y, z, 4, nodeList, pointList);
+		pipeDetectNeighbour(x, y - 1, z, 1, nodeList, pointList);
+		pipeDetectNeighbour(x, y + 1, z, 0, nodeList, pointList);
+		pipeDetectNeighbour(x, y, z - 1, 3, nodeList, pointList);
+		pipeDetectNeighbour(x, y, z + 1, 2, nodeList, pointList);
 
 		/* Assume we will be placing a router in the new position (most likely) */
 		GraphRouter routerNew = new GraphRouter(this, nodeNew);
